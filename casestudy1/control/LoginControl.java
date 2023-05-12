@@ -6,6 +6,8 @@ package casestudy1.control;
 
 import casestudy1.model.*;
 import casestudy1.view.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 /**
@@ -27,10 +29,6 @@ public class LoginControl {
         list.add(new LoginModel("0987452100", "so1dcv"));
     }
 
-    public LoginControl() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
     public boolean checkUser(LoginModel input) {
         for (LoginModel data : list) {
             if (input.getPassword().equals(data.getPassword())
@@ -41,12 +39,22 @@ public class LoginControl {
         return false;
     }
 
-    public void LoginCheck() {
-        model = view.getUserInput();
-        if (checkUser(model)) {
-            view.showMessage("Success");
-        } else {
-            view.showMessage("Error");
+    public class LoginListener implements ActionListener {
+
+        private LoginControl control;
+
+        public LoginListener(LoginControl control) {
+            this.control = control;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LoginModel model = control.view.getUserInput();
+            if (control.checkUser(model)) {
+                view.showMessage("Success");
+            } else {
+                view.showMessage("Error");
+            }
         }
     }
 }
