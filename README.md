@@ -8,7 +8,7 @@ and rename to `/src` (replace all)
 
 ```
 git clone https://github.com/lucthienphong1120/Chat-Socket
-mv Chat-Socket src
+move Chat-Socket src
 ```
 
 ## Note
