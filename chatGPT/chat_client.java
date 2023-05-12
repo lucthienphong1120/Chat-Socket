@@ -9,14 +9,14 @@ import java.util.logging.Logger;
 
 public class chat_client extends javax.swing.JFrame {
 
+    private String name = "Client";
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private String message = "";
     private final String serverIP;
     private Socket connection;
     private final int port = 6789;
     final static String secretKey = "secret";
-    Encryption encyrDecry = new Encryption();
+    Encryption enc = new Encryption();
 
     public chat_client(String serverIP) {
         initComponents();
@@ -38,6 +38,8 @@ public class chat_client extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         status = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        JgetMessage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -89,6 +91,23 @@ public class chat_client extends javax.swing.JFrame {
         jPanel1.add(jLabel1);
         jLabel1.setBounds(0, 0, 400, 400);
 
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Get message:");
+        jPanel1.add(jLabel3);
+        jLabel3.setBounds(370, 10, 180, 16);
+
+        JgetMessage.setEditable(false);
+        JgetMessage.setBackground(new java.awt.Color(102, 102, 102));
+        JgetMessage.setForeground(new java.awt.Color(255, 255, 255));
+        JgetMessage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JgetMessageActionPerformed(evt);
+            }
+        });
+        jPanel1.add(JgetMessage);
+        JgetMessage.setBounds(380, 40, 160, 22);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,66 +126,80 @@ public class chat_client extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-
+        // TODO add your handling code here:
         sendMessage(jTextField1.getText());
         jTextField1.setText("");
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+        // TODO add your handling code here:
         sendMessage(jTextField1.getText());
         jTextField1.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void JgetMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JgetMessageActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JgetMessageActionPerformed
+
     public void startRunning() {
         try {
-            status.setText("Attempting Connection ...");
+            status.setText("Cannot find server...");
             connection = new Socket(serverIP, port);
 
             status.setText("Connected to: " + connection.getInetAddress().getHostAddress());
             output = new ObjectOutputStream(connection.getOutputStream());
             output.flush();
             input = new ObjectInputStream(connection.getInputStream());
-            whileChatting();
+            chatting();
         } catch (IOException ex) {
             Logger.getLogger(chat_client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void whileChatting() {
+    private void printMessage(String name, String message) {
+        chatArea.append("\n");
+        chatArea.append("[" + name + "]: " + message);
+    }
+    
+    private void chatting() {
         jTextField1.setEditable(true);
+        String message = "";
         do {
             try {
-                message = (String) input.readObject();
-                chatArea.append("\n" + message);
-            } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(chat_client.class.getName()).log(Level.SEVERE, null, ex);
+                String data = (String) input.readUTF();
+                String rname = data.split("\\|")[0];
+                String encMessage = data.split("\\|")[1];
+                JgetMessage.setText(encMessage);
+                message = enc.decrypt(encMessage, secretKey);
+                if (message == null) {
+                    message = "Can't decrypt the message, check the secret key again";
+                }
+                printMessage(rname, message);
+            } catch (IOException ex) {
+                Logger.getLogger(chat_server.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-        } while (!message.equals("Client - END"));
+        } while (!message.equals("END"));
     }
 
     private void sendMessage(String message) {
         try {
-            chatArea.append("\nME(Client) - " + message);
-            String encryptedmsg = encyrDecry.encrypt(message, secretKey);
-            System.out.println(encryptedmsg);
-            output.writeObject("                                                             (enc):" + encryptedmsg);
-            Encryption e = new Encryption();
-            message = e.decrypt(encryptedmsg, secretKey);
-            output.writeObject("                                                             Client(decrypt) - " + message);
+            printMessage(name, message);
+            String encMessage = enc.encrypt(message, secretKey);
+            output.writeUTF(name + "|" + encMessage);
             output.flush();
         } catch (IOException ex) {
-            chatArea.append("\n Unable to Send Message");
+            chatArea.append("Unable to Send Message");
         }
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField JgetMessage;
     private javax.swing.JTextArea chatArea;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
