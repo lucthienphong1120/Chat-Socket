@@ -17,7 +17,7 @@ public class ThreadInfor extends Thread {
 
     public void hello() {
         String name = Thread.currentThread().getName();
-        long id = Thread.currentThread().threadId();
+        long id = Thread.currentThread().getId();
         System.out.println("Hello from " + name + " - " + id);
     }
 
