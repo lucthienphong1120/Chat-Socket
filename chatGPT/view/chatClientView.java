@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class chatClientView extends javax.swing.JFrame {
 
@@ -17,6 +18,7 @@ public class chatClientView extends javax.swing.JFrame {
     private int port = 6789;
     User client = new User("Client", "secret");
     Encryption enc = new Encryption();
+    Message m = new Message();
 
     public chatClientView(String serverIP) {
         initComponents();
@@ -145,7 +147,7 @@ public class chatClientView extends javax.swing.JFrame {
         status.setText("Cannot find server...");
         try {
             Socket socket = new Socket(serverIP, port);
-            
+
             status.setText("Connected to: " + socket.getInetAddress().getHostAddress());
             output = new ObjectOutputStream(socket.getOutputStream());
             output.flush();
@@ -154,11 +156,6 @@ public class chatClientView extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(chatClientView.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void printMessage(String name, String message) {
-        chatArea.append("\n");
-        chatArea.append("[" + name + "]: " + message);
     }
 
     private void chatting() {
@@ -174,7 +171,7 @@ public class chatClientView extends javax.swing.JFrame {
                 if (message == null) {
                     message = "Can't decrypt the message, check the secret key again";
                 }
-                printMessage(rname, message);
+                m.printMessage(chatArea, rname, message);
             } catch (IOException ex) {
                 Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -183,12 +180,12 @@ public class chatClientView extends javax.swing.JFrame {
 
     private void sendMessage(String message) {
         try {
-            printMessage(client.getName(), message);
+            m.printMessage(chatArea, client.getName(), message, true);
             String encMessage = enc.encrypt(message, client.getSecretKey());
             output.writeUTF(client.getName() + "|" + encMessage);
             output.flush();
         } catch (IOException ex) {
-            chatArea.append("Unable to Send Message");
+            JOptionPane.showMessageDialog(this, "Unable to Send Message!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
