@@ -1,5 +1,7 @@
-package chatGPT;
+package chatGPT.view;
 
+import chatGPT.control.*;
+import chatGPT.model.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,20 +9,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
-public class chat_server extends javax.swing.JFrame {
+public class chatServerView extends javax.swing.JFrame {
 
-    private String name = "Server";
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private Socket connection;
-    private ServerSocket server;
     private final int totalClients = 100;
     private final int port = 6789;
-    final static String secretKey = "secret";
+    User server = new User("Server", "secret");
     Encryption enc = new Encryption();
+    Message m = new Message();
 
-    public chat_server() {
+    public chatServerView() {
         initComponents();
         this.setTitle("Server");
         this.setVisible(true);
@@ -132,13 +134,13 @@ public class chat_server extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        sendMessage(name, jTextField1.getText());
+        sendMessage(jTextField1.getText());
         jTextField1.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
-        sendMessage(name, jTextField1.getText());
+        sendMessage(jTextField1.getText());
         jTextField1.setText("");
     }//GEN-LAST:event_jTextField1ActionPerformed
 
@@ -148,9 +150,9 @@ public class chat_server extends javax.swing.JFrame {
 
     public void startRunning() {
         try {
-            server = new ServerSocket(port, totalClients);
+            ServerSocket serversocket = new ServerSocket(port, totalClients);
             status.setText("Waiting for connect...");
-            connection = server.accept();
+            connection = serversocket.accept();
 
             status.setText("Connected to " + connection.getInetAddress().getHostAddress());
             output = new ObjectOutputStream(connection.getOutputStream());
@@ -158,13 +160,8 @@ public class chat_server extends javax.swing.JFrame {
             input = new ObjectInputStream(connection.getInputStream());
             chatting();
         } catch (IOException ex) {
-            Logger.getLogger(chat_server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    private void printMessage(String name, String message) {
-        chatArea.append("\n");
-        chatArea.append("[" + name + "]: " + message);
     }
 
     private void chatting() {
@@ -176,25 +173,25 @@ public class chat_server extends javax.swing.JFrame {
                 String rname = data.split("\\|")[0];
                 String encMessage = data.split("\\|")[1];
                 JgetMessage.setText(encMessage);
-                message = enc.decrypt(encMessage, secretKey);
+                message = enc.decrypt(encMessage, server.getSecretKey());
                 if (message == null) {
                     message = "Can't decrypt the message, check the secret key again";
                 }
-                printMessage(rname, message);
+                m.printMessage(chatArea, rname, message);
             } catch (IOException ex) {
-                Logger.getLogger(chat_server.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
             }
         } while (!message.equals("END"));
     }
 
-    private void sendMessage(String name, String message) {
+    private void sendMessage(String message) {
         try {
-            printMessage(name, message);
-            String encMessage = enc.encrypt(message, secretKey);
-            output.writeUTF(name + "|" + encMessage);
+            m.printMessage(chatArea, server.getName(), message, true);
+            String encMessage = enc.encrypt(message, server.getSecretKey());
+            output.writeUTF(server.getName() + "|" + encMessage);
             output.flush();
         } catch (IOException ex) {
-            chatArea.append("Unable to Send Message");
+            JOptionPane.showMessageDialog(this, "Unable to Send Message!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

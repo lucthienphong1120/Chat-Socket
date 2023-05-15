@@ -1,24 +1,26 @@
-package chatGPT;
+package chatGPT.view;
 
+import chatGPT.control.*;
+import chatGPT.model.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
-public class chat_client extends javax.swing.JFrame {
+public class chatClientView extends javax.swing.JFrame {
 
-    private String name = "Client";
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private final String serverIP;
-    private Socket connection;
-    private final int port = 6789;
-    final static String secretKey = "secret";
+    private int port = 6789;
+    User client = new User("Client", "secret");
     Encryption enc = new Encryption();
+    Message m = new Message();
 
-    public chat_client(String serverIP) {
+    public chatClientView(String serverIP) {
         initComponents();
         this.setTitle("Client");
         this.setVisible(true);
@@ -142,25 +144,20 @@ public class chat_client extends javax.swing.JFrame {
     }//GEN-LAST:event_JgetMessageActionPerformed
 
     public void startRunning() {
+        status.setText("Cannot find server...");
         try {
-            status.setText("Cannot find server...");
-            connection = new Socket(serverIP, port);
+            Socket socket = new Socket(serverIP, port);
 
-            status.setText("Connected to: " + connection.getInetAddress().getHostAddress());
-            output = new ObjectOutputStream(connection.getOutputStream());
+            status.setText("Connected to: " + socket.getInetAddress().getHostAddress());
+            output = new ObjectOutputStream(socket.getOutputStream());
             output.flush();
-            input = new ObjectInputStream(connection.getInputStream());
+            input = new ObjectInputStream(socket.getInputStream());
             chatting();
         } catch (IOException ex) {
-            Logger.getLogger(chat_client.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(chatClientView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void printMessage(String name, String message) {
-        chatArea.append("\n");
-        chatArea.append("[" + name + "]: " + message);
-    }
-    
     private void chatting() {
         jTextField1.setEditable(true);
         String message = "";
@@ -170,25 +167,25 @@ public class chat_client extends javax.swing.JFrame {
                 String rname = data.split("\\|")[0];
                 String encMessage = data.split("\\|")[1];
                 JgetMessage.setText(encMessage);
-                message = enc.decrypt(encMessage, secretKey);
+                message = enc.decrypt(encMessage, client.getSecretKey());
                 if (message == null) {
                     message = "Can't decrypt the message, check the secret key again";
                 }
-                printMessage(rname, message);
+                m.printMessage(chatArea, rname, message);
             } catch (IOException ex) {
-                Logger.getLogger(chat_server.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
             }
         } while (!message.equals("END"));
     }
 
     private void sendMessage(String message) {
         try {
-            printMessage(name, message);
-            String encMessage = enc.encrypt(message, secretKey);
-            output.writeUTF(name + "|" + encMessage);
+            m.printMessage(chatArea, client.getName(), message, true);
+            String encMessage = enc.encrypt(message, client.getSecretKey());
+            output.writeUTF(client.getName() + "|" + encMessage);
             output.flush();
         } catch (IOException ex) {
-            chatArea.append("Unable to Send Message");
+            JOptionPane.showMessageDialog(this, "Unable to Send Message!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
