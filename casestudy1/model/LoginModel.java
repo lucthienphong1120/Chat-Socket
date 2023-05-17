@@ -1,4 +1,5 @@
 package casestudy1.model;
+
 public class LoginModel {
 
     private String username;

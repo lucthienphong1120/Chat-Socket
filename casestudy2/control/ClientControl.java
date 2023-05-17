@@ -1,42 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package casestudy2.control;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
 import casestudy2.model.*;
 import casestudy2.view.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
-/**
- *
- * @author Phong
- */
 public class ClientControl {
 
-    private User model;
     private ClientView view;
-    private ArrayList<User> list;
+    private int serverHost;
+    private int serverPort;
 
     public ClientControl(ClientView view) {
         this.view = view;
-        list = new ArrayList<User>();
-        list.add(new User("0987654321", "q2w2e3"));
-        list.add(new User("0983313567", "ki98u7"));
-        list.add(new User("0912345678", "ngaythu5"));
-        list.add(new User("0987452100", "so1dcv"));
-    }
-
-    public boolean checkUser(User input) {
-        for (User data : list) {
-            if (input.getPassword().equals(data.getPassword())
-                    && input.getUsername().equals(data.getUsername())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public class LoginListener implements ActionListener {
@@ -49,11 +31,33 @@ public class ClientControl {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            //Lấy thông tin đăng nhập ở ClientView
             User model = control.view.getUserInput();
-            if (control.checkUser(model)) {
-                view.showMessage("Success");
+            if (Constant.VALID.equals(Validator.checkValid(model))) {
+                String hostname = "localhost";
+                int port = 6868;
+                try (Socket socket = new Socket(hostname, port)) {
+                    OutputStream out = socket.getOutputStream();
+                    ObjectOutputStream obj = new ObjectOutputStream(out);
+                    obj.writeObject(model);
+
+                    //Nhan ket qua tu Server
+                    InputStream in = socket.getInputStream();
+                    BufferedReader bf = new BufferedReader(new InputStreamReader(in));
+                    String response = bf.readLine();
+                    control.view.showMessage(response);
+                    in.close();
+                    bf.close();
+
+                    obj.flush();
+                    obj.close();
+                    out.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    System.out.println("Server not found");
+                }
             } else {
-                view.showMessage("Error");
+                control.view.showMessage("Wrong username or password");
             }
         }
     }

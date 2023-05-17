@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package casestudy2.model;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Phong
- */
 public class User implements Serializable {
 
     private String username;
@@ -34,6 +26,15 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof User) {
+            User user = (User) obj;
+            return this.username.equals(user.getUsername())
+                    && this.password.equals(user.getPassword());
+        }
+        return false;
     }
 
 }

@@ -4,11 +4,6 @@ import casestudy1.control.*;
 import casestudy1.model.*;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Phong
- */
-
 public class LoginView extends javax.swing.JFrame {
     private LoginControl control = new LoginControl(this);
     public LoginView() {
