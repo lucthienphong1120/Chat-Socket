@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class ClientControl {
-    
+
     private ClientView view;
     private int serverHost;
     private int serverPort;
@@ -33,6 +33,7 @@ public class ClientControl {
         public void actionPerformed(ActionEvent e) {
             //Lấy thông tin đăng nhập ở ClientView
             User model = control.view.getUserInput();
+            // check validator from client input
             if (Constant.VALID.equals(Validator.checkValid(model))) {
                 String hostname = "localhost";
                 int port = 6868;
@@ -46,10 +47,9 @@ public class ClientControl {
                     BufferedReader bf = new BufferedReader(new InputStreamReader(in));
                     String response = bf.readLine();
                     if (response.equals("Success")) {
-                        control.view.showMessage(true, response);
-                    }
-                    else {
-                        control.view.showMessage(false, response);
+                        control.view.showMessage(true, "Login successfully!");
+                    } else {
+                        control.view.showMessage(false, "Invalid username and/or password!");
                     }
                     in.close();
                     bf.close();
@@ -62,7 +62,7 @@ public class ClientControl {
                     System.out.println("Server not found");
                 }
             } else {
-                control.view.showMessage(false, "Invalid username and/or password!");
+                control.view.showMessage(false, "You got a validation error!");
             }
         }
     }

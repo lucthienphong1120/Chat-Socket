@@ -5,57 +5,46 @@ import casestudy2.model.*;
 public class Validator {
 
     public static String checkValid(User user) {
-        if (user != null) {//tham so user phai khac null
-            if (user.getPassword().isEmpty()
-                    && user.getUsername().isEmpty()
-                    && user.getPassword() != null
-                    && user.getUsername() != null) {
-
-                String username = user.getUsername();
-
-                if (isValidUsername(username)) {
-                    String password = user.getPassword();
-
-                    //Kiem tra xem username co trung password hay khong?
-                    if (!username.equals(password)) {
-                        if (isValidPassword(password)) {
-                            return Constant.VALID;
-                        }
-                    }
-                }
-
-            }
+        if (user.getPassword().isEmpty() || user.getUsername().isEmpty()) {
+            return Constant.INVALID;
         }
-        return Constant.INVALID;
+        String username = user.getUsername();
+        String password = user.getPassword();
+        //Kiem tra xem username co trung password hay khong?
+        if (username.equals(password)) {
+            return Constant.INVALID;
+        }
+        if (isValidPassword(password) && isValidUsername(username)) {
+            return Constant.VALID;
+        } else {
+            return Constant.INVALID;
+        }
     }
 
     private static boolean isValidPassword(String password) {
-        if (password.length() >= 6 && password.length() <= 10) {
-            for (int i = 0; i < password.length(); i++) {
-                if (!Character.isDigit(password.charAt(i))
-                        && !Character.isAlphabetic(password.charAt(i))) {
-                    return false;
-                }
-            }
-            return true;
+        // Kiểm tra độ dài tối thiểu
+        if (password.length() < 6) {
+            return false;
         }
-        return false;
+        for (int i = 0; i < password.length(); i++) {
+            // Kiểm tra là chữ hoặc số (không có kí tự đặc biệt)
+            if (!Character.isLetterOrDigit(password.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean isValidUsername(String username) {
-        //Kiem tra username bat dau bang 0, 9?
-        if (username.charAt(0) == '0'
-                && username.charAt(1) == '9'
-                && username.length() == 10) {
-
-            //Kiem tra xem username co du 10 ky tu toan so hay khong
-            for (int i = 2; i < 10; i++) {
-                if (username.charAt(i) < '0' || username.charAt(i) > '9') {
+        // Kiểm tra độ dài và tiền tố
+        if (username.length() == 10 && username.startsWith("09")) {
+            // Kiểm tra các kí tự còn lại là số
+            for (int i = 2; i < username.length(); i++) {
+                if (!Character.isDigit(username.charAt(i))) {
                     return false;
                 }
             }
             return true;
-
         }
         return false;
     }
