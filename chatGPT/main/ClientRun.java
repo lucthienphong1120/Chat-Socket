@@ -11,9 +11,8 @@ public class ClientRun {
         ClientControl control = new ClientControl(view);
         view.setVisible(true);
         // Chat
-        chatClientView client;
-        client = new chatClientView("localhost");
-        client.startRunning();
+//        chatClientView client = new chatClientView("localhost");
+//        client.startRunning();
     }
 
 }

@@ -2,6 +2,8 @@ package chatGPT.control;
 
 import chatGPT.model.User;
 import chatGPT.view.loginServerView;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -34,20 +36,19 @@ public class ServerControl {
 
     public void listening() {
         try (ServerSocket serverSocket = new ServerSocket(this.serverPort)) {
-            System.out.println("Server is listening at the port: " + this.serverPort);
+            this.view.showMessage("Server is listening at port " + this.serverPort);
             while (true) {
                 Socket socketFromClient = serverSocket.accept();
-                this.view.showMessage("New Client Connected");
-
+                
                 ObjectInputStream ois = new ObjectInputStream(socketFromClient.getInputStream());
                 User user = (User) ois.readObject();
                 OutputStream output = socketFromClient.getOutputStream();
                 PrintWriter writer = new PrintWriter(output, true);
                 if (this.checkLogin(user)) {
-                    this.view.showMessage("Success");
+                    this.view.showMessage("New Client Connected");
                     writer.print("Success");
                 } else {
-                    this.view.showMessage("Failed");
+                    this.view.showMessage("Login Failed");
                     writer.print("Failed");
                 }
 

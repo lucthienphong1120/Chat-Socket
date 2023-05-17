@@ -37,14 +37,13 @@ public class ServerControl {
             System.out.println("Server is listening at the port: " + this.serverPort);
             while (true) {
                 Socket socketFromClient = serverSocket.accept();
-                this.view.showMessage("New Client Connected");
 
                 ObjectInputStream ois = new ObjectInputStream(socketFromClient.getInputStream());
                 User user = (User) ois.readObject();
                 OutputStream output = socketFromClient.getOutputStream();
                 PrintWriter writer = new PrintWriter(output, true);
                 if (this.checkLogin(user)) {
-                    this.view.showMessage("Success");
+                    this.view.showMessage("New Client Connected");
                     writer.print("Success");
                 } else {
                     this.view.showMessage("Failed");
