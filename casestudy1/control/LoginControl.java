@@ -43,9 +43,9 @@ public class LoginControl {
         public void actionPerformed(ActionEvent e) {
             LoginModel model = control.view.getUserInput();
             if (control.checkUser(model)) {
-                view.showMessage("Success");
+                view.showMessage(true, "Login successfully!");
             } else {
-                view.showMessage("Error");
+                view.showMessage(false, "Invalid username and/or password!");
             }
         }
     }

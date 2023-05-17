@@ -127,11 +127,11 @@ public class ClientView extends javax.swing.JFrame {
         return new User(phonenumber, password);
     }
 
-    public void showMessage(String str) {
-        if ("Success".equals(str)) {
-            JOptionPane.showMessageDialog(this, "Login successfully!", "Message", JOptionPane.INFORMATION_MESSAGE);
+    public void showMessage(boolean success, String message) {
+        if (success) {
+            JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid username and/or password!", "Message", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

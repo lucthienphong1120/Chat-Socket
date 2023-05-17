@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class ClientControl {
-
+    
     private ClientView view;
     private int serverHost;
     private int serverPort;
@@ -45,7 +45,12 @@ public class ClientControl {
                     InputStream in = socket.getInputStream();
                     BufferedReader bf = new BufferedReader(new InputStreamReader(in));
                     String response = bf.readLine();
-                    control.view.showMessage(response);
+                    if (response.equals("Success")) {
+                        control.view.showMessage(true, response);
+                    }
+                    else {
+                        control.view.showMessage(false, response);
+                    }
                     in.close();
                     bf.close();
 
@@ -57,7 +62,7 @@ public class ClientControl {
                     System.out.println("Server not found");
                 }
             } else {
-                control.view.showMessage("Wrong username or password");
+                control.view.showMessage(false, "Invalid username and/or password!");
             }
         }
     }
