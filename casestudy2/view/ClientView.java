@@ -2,26 +2,26 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package casestudy1.view;
+package casestudy2.view;
 
-import casestudy1.control.*;
-import casestudy1.model.*;
+import casestudy2.control.*;
+import casestudy2.model.*;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Phong
  */
-public class LoginView extends javax.swing.JFrame {
+public class ClientView extends javax.swing.JFrame {
 
-    private LoginControl control = new LoginControl(this);
+    private ClientControl control = new ClientControl(this);
 
     /**
      * Creates new form LoginView2
      */
-    public LoginView() {
+    public ClientView() {
         initComponents();
-        LoginControl.LoginListener listener = control.new LoginListener(control);
+        ClientControl.LoginListener listener = control.new LoginListener(control);
         jLoginButton.addActionListener(listener);
     }
 
@@ -133,11 +133,11 @@ public class LoginView extends javax.swing.JFrame {
         return jTextPassword.getText();
     }
 
-    // Thêm phương thức getUserInput() trả về một đối tượng LoginModel
-    public LoginModel getUserInput() {
+    // Thêm phương thức getUserInput() trả về một đối tượng User
+    public User getUserInput() {
         String phonenumber = getPhoneNumber();
         String password = getPassword();
-        return new LoginModel(phonenumber, password);
+        return new User(phonenumber, password);
     }
 
     public void showMessage(String str) {
@@ -165,21 +165,23 @@ public class LoginView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoginView().setVisible(true);
+                new ClientView().setVisible(true);
             }
         });
     }
