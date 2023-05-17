@@ -27,7 +27,7 @@ public class Message {
     public void printMessage(JTextArea chatArea, String name, String message, boolean me) {
         if (me == true) {
             chatArea.append("\n");
-            chatArea.append("\t\t[" + name + "]: " + message);
+            chatArea.append("\t\t\t\t[" + name + "]: " + message);
         }
     }
 

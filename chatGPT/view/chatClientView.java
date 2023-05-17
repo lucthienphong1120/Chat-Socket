@@ -3,8 +3,8 @@ package chatGPT.view;
 import chatGPT.control.*;
 import chatGPT.model.*;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,8 +12,8 @@ import javax.swing.JOptionPane;
 
 public class chatClientView extends javax.swing.JFrame {
 
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
+    private DataOutputStream output;
+    private DataInputStream input;
     private final String serverIP;
     private int port = 6789;
     User client = new User("Client", "secret");
@@ -149,9 +149,9 @@ public class chatClientView extends javax.swing.JFrame {
             Socket socket = new Socket(serverIP, port);
 
             status.setText("Connected to: " + socket.getInetAddress().getHostAddress());
-            output = new ObjectOutputStream(socket.getOutputStream());
+            output = new DataOutputStream(socket.getOutputStream());
             output.flush();
-            input = new ObjectInputStream(socket.getInputStream());
+            input = new DataInputStream(socket.getInputStream());
             chatting();
         } catch (IOException ex) {
             Logger.getLogger(chatClientView.class.getName()).log(Level.SEVERE, null, ex);

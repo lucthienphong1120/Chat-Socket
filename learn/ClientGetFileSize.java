@@ -20,7 +20,7 @@ public class ClientGetFileSize {
     public static void main(String[] argv) {
         try {
             int size;
-            URL url = new URL("https://www.google.com/index.html");
+            URL url = new URL("https://www.google.com/index.php");
             URLConnection connect = url.openConnection();
             size = connect.getContentLength();
             if (size < 0) {
