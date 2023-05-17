@@ -13,11 +13,11 @@ import java.net.Socket;
 
 public class ClientControl {
 
-    private ClientView view;
-    private int serverHost;
-    private int serverPort;
+    private loginClientView view;
+    private String serverHost = "localhost";
+    private int serverPort = 1234;
 
-    public ClientControl(ClientView view) {
+    public ClientControl(loginClientView view) {
         this.view = view;
     }
 
@@ -31,13 +31,11 @@ public class ClientControl {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            //Lấy thông tin đăng nhập ở ClientView
+            //Lấy thông tin đăng nhập ở loginClientView
             User model = control.view.getUserInput();
             // check validator from client input
             if (Constant.VALID.equals(Validator.checkValid(model))) {
-                String hostname = "localhost";
-                int port = 6868;
-                try (Socket socket = new Socket(hostname, port)) {
+                try (Socket socket = new Socket(serverHost, serverPort)) {
                     OutputStream out = socket.getOutputStream();
                     ObjectOutputStream obj = new ObjectOutputStream(out);
                     obj.writeObject(model);

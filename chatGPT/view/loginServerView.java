@@ -1,8 +1,8 @@
 package chatGPT.view;
 
-public class ServerView {
+public class loginServerView {
 
-    public ServerView() {
+    public loginServerView() {
 
     }
 

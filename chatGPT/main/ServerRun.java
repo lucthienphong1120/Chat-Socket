@@ -6,9 +6,13 @@ import chatGPT.view.*;
 public class ServerRun {
 
     public static void main(String[] args) {
-        ServerView view = new ServerView();
+        // Login
+        loginServerView view = new loginServerView();
         ServerControl controller = new ServerControl(view);
-        controller.openServer(6868);
+        controller.openServer(1234);
         controller.listening();
+        // Chat
+        chatServerView myServer = new chatServerView();
+        myServer.startRunning();
     }
 }

@@ -17,7 +17,7 @@ public class chatServerView extends javax.swing.JFrame {
     private DataInputStream input;
     private Socket connection;
     private final int totalClients = 100;
-    private final int port = 6789;
+    private final int port = 1234;
     Message server = new Message("Server", "secret");
     Encryption enc = new Encryption();
     Message m = new Message();

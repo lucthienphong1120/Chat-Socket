@@ -1,7 +1,7 @@
 package chatGPT.control;
 
 import chatGPT.model.User;
-import chatGPT.view.ServerView;
+import chatGPT.view.loginServerView;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -16,9 +16,9 @@ public class ServerControl {
     private int serverPort;
     private ServerSocket myServer;
     private Socket clientSocket;
-    private ServerView view;
+    private loginServerView view;
 
-    public ServerControl(ServerView view) {
+    public ServerControl(loginServerView view) {
         this.view = view;
         list = new ArrayList<User>();
         list.add(new User("0987654321", "111111"));

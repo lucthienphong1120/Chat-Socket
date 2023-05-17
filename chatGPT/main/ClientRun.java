@@ -6,9 +6,14 @@ import chatGPT.view.*;
 public class ClientRun {
 
     public static void main(String[] args) {
-        ClientView view = new ClientView();
+        // Login
+        loginClientView view = new loginClientView();
         ClientControl control = new ClientControl(view);
         view.setVisible(true);
+        // Chat
+        chatClientView client;
+        client = new chatClientView("localhost");
+        client.startRunning();
     }
 
 }

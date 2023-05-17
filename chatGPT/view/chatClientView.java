@@ -15,7 +15,7 @@ public class chatClientView extends javax.swing.JFrame {
     private DataOutputStream output;
     private DataInputStream input;
     private final String serverIP;
-    private int port = 6789;
+    private int port = 1234;
     Message client = new Message("Client", "secret");
     Encryption enc = new Encryption();
     Message m = new Message();
