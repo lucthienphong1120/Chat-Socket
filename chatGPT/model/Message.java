@@ -1,22 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package chatGPT.model;
 
 import javax.swing.JTextArea;
 
-/**
- *
- * @author Phong
- */
 public class Message {
 
-    String name = "";
-    String message = "";
-    String encMessage = "";
+    private String name = "";
+    private String message = "";
+    private String encMessage = "";
+    private String secretKey = "secret";
 
     public Message() {
+    }
+    
+    public Message(String name) {
+        this.name = name;
+    }
+
+    public Message(String name, String secretKey) {
+        this.name = name;
+        this.secretKey = secretKey;
     }
 
     public void printMessage(JTextArea chatArea, String name, String message) {
@@ -31,6 +33,14 @@ public class Message {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public String getMessage() {
         return message;
     }
@@ -45,6 +55,14 @@ public class Message {
 
     public void setEncMessage(String encMessage) {
         this.encMessage = encMessage;
+    }
+    
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
     }
 
 }

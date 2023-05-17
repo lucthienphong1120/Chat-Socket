@@ -1,38 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package chatGPT.model;
 
-/**
- *
- * @author Phong
- */
-public class User {
+import java.io.Serializable;
 
-    private String name;
+public class User implements Serializable {
+
     private String username;
     private String password;
-    String secretKey = "secret";
 
-    public User() {
-    }
-
-    public User(String name) {
-        this.name = name;
-    }
-
-    public User(String name, String secretKey) {
-        this.name = name;
-        this.secretKey = secretKey;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -51,12 +28,13 @@ public class User {
         this.password = password;
     }
 
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof User) {
+            User user = (User) obj;
+            return this.username.equals(user.getUsername())
+                    && this.password.equals(user.getPassword());
+        }
+        return false;
     }
 
 }
