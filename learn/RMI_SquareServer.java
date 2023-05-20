@@ -6,11 +6,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-public class RMI_Server extends UnicastRemoteObject implements RMI_SquaredInterface {
+public class RMI_SquareServer extends UnicastRemoteObject implements RMI_SquaredInterface {
 
     private static final long serialVersionUID = -4002277602339798718L;
 
-    public RMI_Server() throws RemoteException {
+    public RMI_SquareServer() throws RemoteException {
     }
 
     @Override
@@ -28,9 +28,7 @@ public class RMI_Server extends UnicastRemoteObject implements RMI_SquaredInterf
 
     public static void main(String[] args) throws RemoteException, AlreadyBoundException {
         Registry registry = LocateRegistry.createRegistry(777);
-        registry.bind("squared", new RMI_Server());
+        registry.bind("squared", new RMI_SquareServer());
         System.out.println("Server is running and ready for service.....");
-
     }
-
 }
