@@ -1,10 +1,7 @@
-package rmi_implement;
+package rmi;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import rmicallback.AtClient;
-import rmicallback.AtServer;
 
 public class AtServerImpl extends UnicastRemoteObject implements AtServer {
 

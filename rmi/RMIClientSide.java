@@ -1,11 +1,10 @@
-package rmicallback;
+package rmi;
 
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import rmi_implement.AtClientImpl;
 
 public class RMIClientSide {
 
