@@ -7,11 +7,11 @@ public class ClientRun {
 
     public static void main(String[] args) {
         // Login
-        loginClientView view = new loginClientView();
+        loginControlView view = new loginControlView();
         ClientControl control = new ClientControl(view);
         view.setVisible(true);
         // Chat
-//        chatClientView client = new chatClientView("localhost");
+//        chatClientView client = new chatClientView();
 //        client.startRunning();
     }
 

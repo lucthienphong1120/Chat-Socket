@@ -11,19 +11,18 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class chatClientView extends javax.swing.JFrame {
-
+    
     private DataOutputStream output;
     private DataInputStream input;
-    private final String serverIP;
+    private String serverIP = "localhost";
     private int port = 1234;
     Message client = new Message("Client", "secret");
     Encryption enc = new Encryption();
     Message m = new Message();
 
-    public chatClientView(String serverIP) {
+    public chatClientView() {
         initComponents();
         this.setVisible(true);
-        this.serverIP = serverIP;
     }
 
     @SuppressWarnings("unchecked")
@@ -36,7 +35,6 @@ public class chatClientView extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         chatArea = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
-        status = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         JgetMessage = new javax.swing.JTextField();
 
@@ -58,7 +56,7 @@ public class chatClientView extends javax.swing.JFrame {
         jTextMessage.setBounds(10, 350, 440, 40);
 
         jButton1.setBackground(new java.awt.Color(255, 255, 255));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(0, 0, 0));
         jButton1.setText("Send");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -84,11 +82,6 @@ public class chatClientView extends javax.swing.JFrame {
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.add(jLabel2);
         jLabel2.setBounds(190, 10, 180, 70);
-
-        status.setForeground(new java.awt.Color(255, 255, 255));
-        status.setText("Status");
-        jPanel1.add(status);
-        status.setBounds(0, 60, 190, 30);
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -142,11 +135,9 @@ public class chatClientView extends javax.swing.JFrame {
     }//GEN-LAST:event_JgetMessageActionPerformed
 
     public void startRunning() {
-        status.setText("Cannot find server...");
         try {
             Socket socket = new Socket(serverIP, port);
 
-            status.setText("Connected to: " + socket.getInetAddress().getHostAddress());
             output = new DataOutputStream(socket.getOutputStream());
             output.flush();
             input = new DataInputStream(socket.getInputStream());
@@ -196,6 +187,5 @@ public class chatClientView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextMessage;
-    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 }

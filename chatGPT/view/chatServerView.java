@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 public class chatServerView extends javax.swing.JFrame {
 
+    private serverControlView serverControlView = new serverControlView();
     private DataOutputStream output;
     private DataInputStream input;
     private Socket connection;
@@ -36,7 +37,6 @@ public class chatServerView extends javax.swing.JFrame {
         chatArea = new javax.swing.JTextArea();
         jTextMessage = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        status = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         JgetMessage = new javax.swing.JTextField();
@@ -68,7 +68,7 @@ public class chatServerView extends javax.swing.JFrame {
         jTextMessage.setBounds(10, 350, 440, 40);
 
         jButton1.setBackground(new java.awt.Color(0, 102, 153));
-        jButton1.setFont(new java.awt.Font("Arial Black", 1, 12)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Send");
         jButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -79,11 +79,6 @@ public class chatServerView extends javax.swing.JFrame {
         });
         jPanel1.add(jButton1);
         jButton1.setBounds(460, 350, 80, 40);
-
-        status.setForeground(new java.awt.Color(255, 255, 255));
-        status.setText("Status");
-        jPanel1.add(status);
-        status.setBounds(0, 60, 190, 30);
 
         jLabel2.setFont(new java.awt.Font("Myriad Pro", 1, 48)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(204, 204, 0));
@@ -152,10 +147,10 @@ public class chatServerView extends javax.swing.JFrame {
     public void startRunning() {
         try {
             ServerSocket serversocket = new ServerSocket(port, totalClients);
-            status.setText("Waiting for connect...");
+            serverControlView.jStatus.setText("Waiting for connect...");
             connection = serversocket.accept();
 
-            status.setText("Connected to " + connection.getInetAddress().getHostAddress());
+            serverControlView.jStatus.setText("Connected to " + connection.getInetAddress().getHostAddress());
             output = new DataOutputStream(connection.getOutputStream());
             output.flush();
             input = new DataInputStream(connection.getInputStream());
@@ -204,6 +199,5 @@ public class chatServerView extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextMessage;
-    private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 }

@@ -13,12 +13,13 @@ import java.net.Socket;
 
 public class ClientControl {
 
-    private loginClientView view;
-    private String serverHost = "localhost";
-    private int serverPort = 1234;
+    private loginControlView loginView;
+    private chatClientView clientView;
+    private String serverName = "localhost";
+    private int port = 1234;
 
-    public ClientControl(loginClientView view) {
-        this.view = view;
+    public ClientControl(loginControlView view) {
+        this.loginView = view;
     }
 
     public class LoginListener implements ActionListener {
@@ -31,11 +32,11 @@ public class ClientControl {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            //Lấy thông tin đăng nhập ở loginClientView
-            User model = control.view.getUserInput();
+            //Lấy thông tin đăng nhập ở loginControlView
+            User model = control.loginView.getUserInput();
             // check validator from client input
             if (Constant.VALID.equals(Validator.checkValid(model))) {
-                try (Socket socket = new Socket(serverHost, serverPort)) {
+                try (Socket socket = new Socket(serverName, port)) {
                     OutputStream out = socket.getOutputStream();
                     ObjectOutputStream obj = new ObjectOutputStream(out);
                     obj.writeObject(model);
@@ -45,9 +46,11 @@ public class ClientControl {
                     BufferedReader bf = new BufferedReader(new InputStreamReader(in));
                     String response = bf.readLine();
                     if (response.equals("Success")) {
-                        control.view.showMessage(true, "Login successfully!");
+                        control.loginView.showMessage(true, "Login successfully!");
+                        clientView = new chatClientView();
+                        loginView.dispose();
                     } else {
-                        control.view.showMessage(false, "Invalid username and/or password!");
+                        control.loginView.showMessage(false, "Invalid username and/or password!");
                     }
                     in.close();
                     bf.close();
@@ -60,7 +63,7 @@ public class ClientControl {
                     System.out.println("Server not found");
                 }
             } else {
-                control.view.showMessage(false, "You got a validation error!");
+                control.loginView.showMessage(false, "You got a validation error!");
             }
         }
     }

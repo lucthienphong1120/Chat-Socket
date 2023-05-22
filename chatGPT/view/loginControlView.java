@@ -4,12 +4,12 @@ import chatGPT.control.*;
 import chatGPT.model.*;
 import javax.swing.JOptionPane;
 
-public class loginClientView extends javax.swing.JFrame {
+public class loginControlView extends javax.swing.JFrame {
 
     private ClientControl control = new ClientControl(this);
     private static final long serialVersionUID = 1L;
 
-    public loginClientView() {
+    public loginControlView() {
         initComponents();
         ClientControl.LoginListener listener = control.new LoginListener(control);
         jLoginButton.addActionListener(listener);
@@ -148,19 +148,19 @@ public class loginClientView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(loginClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(loginControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(loginClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(loginControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(loginClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(loginControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(loginClientView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(loginControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
      
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new loginClientView().setVisible(true);
+                new loginControlView().setVisible(true);
             }
         });
     }

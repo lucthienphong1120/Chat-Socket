@@ -2,11 +2,11 @@ package chatGPT.view;
 
 import chatGPT.control.*;
 
-public class loginServerView extends javax.swing.JFrame {
+public class serverControlView extends javax.swing.JFrame {
 
     private ServerControl control = new ServerControl(this);
     
-    public loginServerView() {
+    public serverControlView() {
         initComponents();
         jPanel1.setVisible(false);
     }
@@ -106,21 +106,23 @@ public class loginServerView extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(loginServerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(serverControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(loginServerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(serverControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(loginServerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(serverControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(loginServerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(serverControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new loginServerView().setVisible(true);
+                new serverControlView().setVisible(true);
             }
         });
     }
@@ -129,6 +131,6 @@ public class loginServerView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton jStartServer;
-    private javax.swing.JLabel jStatus;
+    public javax.swing.JLabel jStatus;
     // End of variables declaration//GEN-END:variables
 }
