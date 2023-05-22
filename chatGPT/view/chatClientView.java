@@ -22,7 +22,6 @@ public class chatClientView extends javax.swing.JFrame {
 
     public chatClientView(String serverIP) {
         initComponents();
-        this.setTitle("Client");
         this.setVisible(true);
         this.serverIP = serverIP;
     }
@@ -42,6 +41,7 @@ public class chatClientView extends javax.swing.JFrame {
         JgetMessage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Client chat");
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 51));

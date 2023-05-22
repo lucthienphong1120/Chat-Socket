@@ -29,7 +29,7 @@ public class loginClientView extends javax.swing.JFrame {
         jShowPassword = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Login by LTP");
+        setTitle("Login Control");
 
         jLoginButton.setText("Login");
         jLoginButton.addActionListener(new java.awt.event.ActionListener() {

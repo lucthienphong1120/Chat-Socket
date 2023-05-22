@@ -24,7 +24,6 @@ public class chatServerView extends javax.swing.JFrame {
 
     public chatServerView() {
         initComponents();
-        this.setTitle("Server");
         this.setVisible(true);
     }
 
@@ -43,6 +42,7 @@ public class chatServerView extends javax.swing.JFrame {
         JgetMessage = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Server chat");
         setBackground(new java.awt.Color(51, 255, 204));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(new java.awt.Color(102, 255, 204));
