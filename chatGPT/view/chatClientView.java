@@ -24,7 +24,6 @@ public class chatClientView extends javax.swing.JFrame {
         initComponents();
         this.setTitle("Client");
         this.setVisible(true);
-        status.setVisible(true);
         this.serverIP = serverIP;
     }
 
@@ -33,13 +32,12 @@ public class chatClientView extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        jTextMessage = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         chatArea = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         status = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         JgetMessage = new javax.swing.JTextField();
 
@@ -50,14 +48,14 @@ public class chatClientView extends javax.swing.JFrame {
         jPanel1.setForeground(new java.awt.Color(204, 204, 204));
         jPanel1.setLayout(null);
 
-        jTextField1.setToolTipText("text\tType your message here...");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jTextMessage.setToolTipText("text\tType your message here...");
+        jTextMessage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jTextMessageActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField1);
-        jTextField1.setBounds(10, 350, 440, 40);
+        jPanel1.add(jTextMessage);
+        jTextMessage.setBounds(10, 350, 440, 40);
 
         jButton1.setBackground(new java.awt.Color(255, 255, 255));
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -73,6 +71,7 @@ public class chatClientView extends javax.swing.JFrame {
 
         chatArea.setColumns(20);
         chatArea.setRows(5);
+        chatArea.setFocusable(false);
         jScrollPane1.setViewportView(chatArea);
 
         jPanel1.add(jScrollPane1);
@@ -90,8 +89,6 @@ public class chatClientView extends javax.swing.JFrame {
         status.setText("Status");
         jPanel1.add(status);
         status.setBounds(0, 60, 190, 30);
-        jPanel1.add(jLabel1);
-        jLabel1.setBounds(0, 0, 400, 400);
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -102,6 +99,7 @@ public class chatClientView extends javax.swing.JFrame {
         JgetMessage.setEditable(false);
         JgetMessage.setBackground(new java.awt.Color(102, 102, 102));
         JgetMessage.setForeground(new java.awt.Color(255, 255, 255));
+        JgetMessage.setFocusable(false);
         JgetMessage.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JgetMessageActionPerformed(evt);
@@ -127,16 +125,16 @@ public class chatClientView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jTextMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextMessageActionPerformed
         // TODO add your handling code here:
-        sendMessage(jTextField1.getText());
-        jTextField1.setText("");
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        sendMessage(jTextMessage.getText());
+        jTextMessage.setText("");
+    }//GEN-LAST:event_jTextMessageActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        sendMessage(jTextField1.getText());
-        jTextField1.setText("");
+        sendMessage(jTextMessage.getText());
+        jTextMessage.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void JgetMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JgetMessageActionPerformed
@@ -159,7 +157,6 @@ public class chatClientView extends javax.swing.JFrame {
     }
 
     private void chatting() {
-        jTextField1.setEditable(true);
         String message = "";
         do {
             try {
@@ -194,12 +191,11 @@ public class chatClientView extends javax.swing.JFrame {
     private javax.swing.JTextField JgetMessage;
     private javax.swing.JTextArea chatArea;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextMessage;
     private javax.swing.JLabel status;
     // End of variables declaration//GEN-END:variables
 }

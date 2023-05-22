@@ -51,12 +51,10 @@ public class ServerControl {
                     this.view.showMessage("Login Failed");
                     writer.print("Failed");
                 }
-
                 writer.flush();
                 writer.close();
                 output.close();
             }
-
         } catch (Exception e) {
             System.err.println("Server exception: " + e.getMessage());
             e.printStackTrace();

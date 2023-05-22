@@ -9,9 +9,9 @@ public class ServerRun {
         // Login
         loginServerView view = new loginServerView();
         view.setVisible(true);
-        ServerControl controller = new ServerControl(view);
-        controller.openServer(1234);
-        controller.listening();
+//        ServerControl controller = new ServerControl(view);
+//        controller.openServer(1234);
+//        controller.listening();
         // Chat
 //        chatServerView myServer = new chatServerView();
 //        myServer.startRunning();
