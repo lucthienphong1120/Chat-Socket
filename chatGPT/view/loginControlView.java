@@ -6,13 +6,11 @@ import javax.swing.JOptionPane;
 
 public class loginControlView extends javax.swing.JFrame {
 
-    private ClientControl control = new ClientControl(this);
     private static final long serialVersionUID = 1L;
+    ClientControl control = new ClientControl(this);
 
     public loginControlView() {
         initComponents();
-        ClientControl.LoginListener listener = control.new LoginListener(control);
-        jLoginButton.addActionListener(listener);
         jTextPassword.setEchoChar('•');
     }
 
@@ -102,6 +100,7 @@ public class loginControlView extends javax.swing.JFrame {
 
     private void jLoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLoginButtonActionPerformed
         // TODO add your handling code here:
+        control.login();
     }//GEN-LAST:event_jLoginButtonActionPerformed
 
     private void jShowPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jShowPasswordActionPerformed
@@ -156,7 +155,7 @@ public class loginControlView extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(loginControlView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-     
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

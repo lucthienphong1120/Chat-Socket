@@ -1,28 +1,29 @@
 package chatGPT.view;
 
 import chatGPT.control.*;
-import chatGPT.model.*;
-import java.io.IOException;
+import chatGPT.model.Message;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class chatClientView extends javax.swing.JFrame {
-    
-    private DataOutputStream output;
-    private DataInputStream input;
-    private String serverIP = "localhost";
-    private int port = 1234;
-    Message client = new Message("Client", "secret");
-    Encryption enc = new Encryption();
-    Message m = new Message();
 
-    public chatClientView() {
+    Encryption enc = new Encryption();
+    Socket connection;
+    private String serverName = "localhost";
+    private int port = 1234;
+    Message client;
+
+    public chatClientView(String serverName, int port, Message client) {
         initComponents();
         this.setVisible(true);
+        this.serverName = serverName;
+        this.port = port;
+        this.client = client;
     }
 
     @SuppressWarnings("unchecked")
@@ -134,23 +135,13 @@ public class chatClientView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_JgetMessageActionPerformed
 
-    public void startRunning() {
-        try {
-            Socket socket = new Socket(serverIP, port);
-
-            output = new DataOutputStream(socket.getOutputStream());
-            output.flush();
-            input = new DataInputStream(socket.getInputStream());
-            chatting();
-        } catch (IOException ex) {
-            Logger.getLogger(chatClientView.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void chatting() {
+    public void chatting() {
         String message = "";
+        System.out.println("client chat");
         do {
             try {
+                connection = new Socket(serverName, port);
+                DataInputStream input = new DataInputStream(connection.getInputStream());
                 String data = (String) input.readUTF();
                 String rname = data.split("\\|")[0];
                 String encMessage = data.split("\\|")[1];
@@ -159,16 +150,17 @@ public class chatClientView extends javax.swing.JFrame {
                 if (message == null) {
                     message = "Can't decrypt the message, check the secret key again";
                 }
-                m.printMessage(chatArea, rname, message);
+                client.printMessage(chatArea, rname, message);
             } catch (IOException ex) {
                 Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
             }
         } while (!message.equals("END"));
     }
 
-    private void sendMessage(String message) {
+    public void sendMessage(String message) {
         try {
-            m.printMessage(chatArea, client.getName(), message, true);
+            DataOutputStream output = new DataOutputStream(connection.getOutputStream());
+            client.printMessage(chatArea, client.getName(), message, true);
             String encMessage = enc.encrypt(message, client.getSecretKey());
             output.writeUTF(client.getName() + "|" + encMessage);
             output.flush();
@@ -179,13 +171,13 @@ public class chatClientView extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField JgetMessage;
-    private javax.swing.JTextArea chatArea;
+    public javax.swing.JTextField JgetMessage;
+    public javax.swing.JTextArea chatArea;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextMessage;
+    public javax.swing.JTextField jTextMessage;
     // End of variables declaration//GEN-END:variables
 }

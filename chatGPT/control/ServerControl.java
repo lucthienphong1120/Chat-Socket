@@ -16,13 +16,15 @@ public class ServerControl {
     private serverControlView controlView;
     private chatServerView serverView;
     private ArrayList<User> list;
+    private Message server = new Message("Server", "secret");
     private int state;
     private int totalClients = 100;
     private int port = 1234;
     private ServerSocket serverSocket;
     private Socket connection;
-    private ObjectInputStream input;
-    private DataOutputStream output;
+
+    public ServerControl() {
+    }
 
     public ServerControl(serverControlView view) {
         this.state = UserState.NOT_LOGIN;
@@ -56,25 +58,26 @@ public class ServerControl {
         try {
             serverSocket = new ServerSocket(this.port, this.totalClients);
             this.controlView.showMessage("Server is listening at port " + this.port);
-            while (true) {
-                connection = serverSocket.accept();
-                if (this.state == UserState.NOT_LOGIN) {
-                    input = new ObjectInputStream(connection.getInputStream());
-                    User user = (User) input.readObject();
-                    output = new DataOutputStream(connection.getOutputStream());
+            connection = serverSocket.accept();
+            while (this.state == UserState.NOT_LOGIN) {
+                ObjectInputStream input = new ObjectInputStream(connection.getInputStream());
+                User user = (User) input.readObject();
+                DataOutputStream output = new DataOutputStream(connection.getOutputStream());
 
-                    if (this.checkLogin(user)) {
-                        this.controlView.showMessage(("New client connect at " + connection.getInetAddress().getHostAddress()));
-                        output.writeBoolean(true);
-                        serverView = new chatServerView();
-                        this.state = UserState.CONNECTED;
-                    } else {
-                        output.writeBoolean(false);
-                    }
-                    output.flush();
-                } else if (this.state == UserState.CONNECTED) {
-                    
+                if (this.checkLogin(user)) {
+                    this.controlView.showMessage(("New client connect at " + connection.getInetAddress().getHostAddress()));
+                    output.writeBoolean(true);
+                    this.state = UserState.CONNECTED;
+                    connection.close();
+                } else {
+                    output.writeBoolean(false);
                 }
+                output.flush();
+            }
+            if (this.state == UserState.CONNECTED) {
+                connection = serverSocket.accept();
+                serverView = new chatServerView(connection, server);
+                serverView.chatting();
             }
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
