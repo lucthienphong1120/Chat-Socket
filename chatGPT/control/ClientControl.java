@@ -4,21 +4,26 @@ import chatGPT.model.*;
 import chatGPT.view.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientControl {
 
     private loginControlView loginView;
     private chatClientView clientView;
+    private int state;
     private String serverName = "localhost";
     private int port = 1234;
+    private Socket connection;
+    private DataInputStream input;
+    private ObjectOutputStream output;
 
     public ClientControl(loginControlView view) {
+        this.state = UserState.NOT_LOGIN;
         this.loginView = view;
     }
 
@@ -34,36 +39,32 @@ public class ClientControl {
         public void actionPerformed(ActionEvent e) {
             //Lấy thông tin đăng nhập ở loginControlView
             User model = control.loginView.getUserInput();
-            // check validator from client input
-            if (Constant.VALID.equals(Validator.checkValid(model))) {
-                try (Socket socket = new Socket(serverName, port)) {
-                    OutputStream out = socket.getOutputStream();
-                    ObjectOutputStream obj = new ObjectOutputStream(out);
-                    obj.writeObject(model);
+            if (state == UserState.NOT_LOGIN) {
+                // check validator from client input
+                if (Validator.checkValid(model) == Constant.VALID) {
+                    try {
+                        connection = new Socket(serverName, port);
+                        output = new ObjectOutputStream(connection.getOutputStream());
+                        output.writeObject(model);
+                        output.flush();
+                        input = new DataInputStream(connection.getInputStream());
 
-                    //Nhan ket qua tu Server
-                    InputStream in = socket.getInputStream();
-                    BufferedReader bf = new BufferedReader(new InputStreamReader(in));
-                    String response = bf.readLine();
-                    if (response.equals("Success")) {
-                        control.loginView.showMessage(true, "Login successfully!");
-                        clientView = new chatClientView();
-                        loginView.dispose();
-                    } else {
-                        control.loginView.showMessage(false, "Invalid username and/or password!");
+                        boolean response = input.readBoolean();
+                        System.out.println(response);
+                        if (response) {
+                            control.loginView.showMessage(true, "Login successfully!");
+                            clientView = new chatClientView();
+                            loginView.dispose();
+                            state = UserState.CONNECTED;
+                        } else {
+                            control.loginView.showMessage(false, "Invalid username and/or password!");
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    in.close();
-                    bf.close();
-
-                    obj.flush();
-                    obj.close();
-                    out.close();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    System.out.println("Server not found");
+                } else {
+                    control.loginView.showMessage(false, "You got a validation error!");
                 }
-            } else {
-                control.loginView.showMessage(false, "You got a validation error!");
             }
         }
     }

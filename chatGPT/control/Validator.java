@@ -4,7 +4,7 @@ import chatGPT.model.*;
 
 public class Validator {
 
-    public static String checkValid(User user) {
+    public static int checkValid(User user) {
         if (user.getPassword().isEmpty() || user.getUsername().isEmpty()) {
             return Constant.INVALID;
         }

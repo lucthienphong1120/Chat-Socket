@@ -81,13 +81,13 @@ public class chatClientView extends javax.swing.JFrame {
         jLabel2.setText("Client");
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.add(jLabel2);
-        jLabel2.setBounds(190, 10, 180, 70);
+        jLabel2.setBounds(10, 10, 180, 70);
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Get message:");
         jPanel1.add(jLabel3);
-        jLabel3.setBounds(370, 10, 180, 16);
+        jLabel3.setBounds(330, 10, 220, 16);
 
         JgetMessage.setEditable(false);
         JgetMessage.setBackground(new java.awt.Color(102, 102, 102));
@@ -99,7 +99,7 @@ public class chatClientView extends javax.swing.JFrame {
             }
         });
         jPanel1.add(JgetMessage);
-        JgetMessage.setBounds(380, 40, 160, 22);
+        JgetMessage.setBounds(330, 40, 210, 22);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

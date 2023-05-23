@@ -88,13 +88,13 @@ public class chatServerView extends javax.swing.JFrame {
         jLabel2.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
         jLabel2.setRequestFocusEnabled(false);
         jPanel1.add(jLabel2);
-        jLabel2.setBounds(190, 10, 190, 70);
+        jLabel2.setBounds(10, 10, 190, 70);
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Get message:");
         jPanel1.add(jLabel1);
-        jLabel1.setBounds(380, 10, 170, 16);
+        jLabel1.setBounds(330, 10, 220, 16);
 
         JgetMessage.setEditable(false);
         JgetMessage.setBackground(new java.awt.Color(102, 102, 102));
@@ -107,7 +107,7 @@ public class chatServerView extends javax.swing.JFrame {
             }
         });
         jPanel1.add(JgetMessage);
-        JgetMessage.setBounds(390, 40, 150, 22);
+        JgetMessage.setBounds(330, 40, 210, 22);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -147,10 +147,8 @@ public class chatServerView extends javax.swing.JFrame {
     public void startRunning() {
         try {
             ServerSocket serversocket = new ServerSocket(port, totalClients);
-            serverControlView.jStatus.setText("Waiting for connect...");
             connection = serversocket.accept();
 
-            serverControlView.jStatus.setText("Connected to " + connection.getInetAddress().getHostAddress());
             output = new DataOutputStream(connection.getOutputStream());
             output.flush();
             input = new DataInputStream(connection.getInputStream());

@@ -1,6 +1,6 @@
 package chatGPT.model;
 
 public class Constant {
-    public static final String INVALID = "Invalid";
-    public static final String VALID = "Valid";
+    public static final int INVALID = 0;
+    public static final int VALID = 1;
 }
