@@ -9,6 +9,14 @@ FileInputStream là một lớp con của InputStream thường được sử d�
 +InputStream sẽ đọc dữ liệu ngay khi có(Nhập dữ liệu từ bàn phím Input sẽ đọc ngay khi vừa nhập từ bàn phím không cần enter).
 +InputStream sẽ đọc từ phải trước nhưng nếu in ra vẫn sẽ theo từ trái.
 */
+/* Những hàm tự tìm hiểu:
+int.readAllBytes();
+int.readNBytes(int): đọc tối đa đến byte ở vị trí nhập từ InputStream.
+TransferTo(OutputStream): sử dụng để đọc file và đẩy về OutputStream(nó sẽ trả về byte). Khi xong InputStream sẽ ở cuối stream. Phương thức này không đóng In/OutputStream.
+markSupported(): kiểm tra InputStream có hỗ trợ hoạt động mark(int) hay không.
+mark(int):cho phép đánh dấu bị trí hiện tại trên stream. Có thể đọc tiếp các bytes tiếp theo, và gọi phương thức reset() để quay trở lại vị trí đánh dấu trước đó.
+reset(): Nếu sử sụng phương thức mark() thì reset() để quay trở lại vị trí đã được đánh dấu.
+*/
 /*Một số phương thức của InputStream:
 int.read(): đọc thông tin dạng byte, giá trị của byte trả về là số nguyên trong khoảng 0-255 hoặc trả về -1 nếu ở cuối.
 Phương thức này sẽ (block) cho tới khi byte sẵn có để đọc hoặc sảy ra lỗi IO hoặc đọc hết Stream.
