@@ -15,7 +15,7 @@ public class ChatView extends javax.swing.JFrame {
         jSend = new javax.swing.JButton();
         jTextMessage = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jTextArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -61,10 +61,10 @@ public class ChatView extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jScrollPane1.setViewportView(jTextArea1);
+        jTextArea.setColumns(20);
+        jTextArea.setRows(5);
+        jTextArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jScrollPane1.setViewportView(jTextArea);
 
         jLabel1.setText("user online");
 
@@ -99,26 +99,12 @@ public class ChatView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextMessageActionPerformed
-        // TODO add your handling code here:
-        sendMessage(jTextMessage.getText());
-        jTextMessage.setText("");
+
     }//GEN-LAST:event_jTextMessageActionPerformed
 
     private void jSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSendActionPerformed
-        // TODO add your handling code here:
-        sendMessage(jTextMessage.getText());
-        jTextMessage.setText("");
-    }//GEN-LAST:event_jSendActionPerformed
 
-    public void sendMessage(String message) {
-        // Cập nhật tin nhắn mới trong JTextArea
-        String senderName = "Name";
-        String sentTime = "10:00:00";
-        String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
-        jTextArea1.append(newMessage);
-        // Cuộn xuống cuối tin nhắn mới
-        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
-    }
+    }//GEN-LAST:event_jSendActionPerformed
 
     /**
      * @param args the command line arguments
@@ -160,9 +146,9 @@ public class ChatView extends javax.swing.JFrame {
     private javax.swing.JPanel jChatPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton jSend;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextMessage;
+    public javax.swing.JButton jSend;
+    public javax.swing.JTextArea jTextArea;
+    public javax.swing.JTextField jTextMessage;
     // End of variables declaration//GEN-END:variables
 
 }

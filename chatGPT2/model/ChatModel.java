@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ChatModel {
     private List<String> userList;
-    private List<Message> messageHistory;
+    private List<MessageModel> messageHistory;
 
     public ChatModel() {
         userList = new ArrayList<>();
@@ -24,11 +24,11 @@ public class ChatModel {
         return userList;
     }
 
-    public void addMessage(Message message) {
+    public void addMessage(MessageModel message) {
         messageHistory.add(message);
     }
 
-    public List<Message> getMessageHistory() {
+    public List<MessageModel> getMessageHistory() {
         return messageHistory;
     }
 }

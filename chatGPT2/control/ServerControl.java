@@ -63,7 +63,7 @@ class ClientHandler implements Runnable {
                 // send message
                 OutputStream outToClient = clientSock.getOutputStream();
                 DataOutputStream out = new DataOutputStream(outToClient);
-                out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
+//                out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
 
                 Thread.sleep(500);
             }

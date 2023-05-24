@@ -2,18 +2,21 @@ package chatGPT2.model;
 
 import java.util.Date;
 
-public class Message {
+public class MessageModel {
 
     private String name = "";
     private String message = "";
-    private Date time; 
+    private Date time;
 
-    public Message(String name, String message, Date time) {
+    public MessageModel() {
+    }
+
+    public MessageModel(String name, String message, Date time) {
         this.name = name;
         this.message = message;
         this.time = time;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -21,7 +24,7 @@ public class Message {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getMessage() {
         return message;
     }

@@ -1,5 +1,7 @@
 ## IDEA Chat App
 
+> Hiểu được Data Flow, tìm được hướng đi đúng, code mượt ngay
+
 Dự án của bạn có vẻ rất thú vị! Dưới đây là một số gợi ý và thảo luận về các yếu tố quan trọng trong dự án chat app của bạn:
 
 1. Template view chính: Việc có một template view chính cho phép người dùng kết nối và giao tiếp với server là một ý tưởng tốt. Bạn có thể sử dụng JFrame để tạo cửa sổ chat và các thành phần như JTextField, JTextArea để hiển thị và nhập dữ liệu.

@@ -10,10 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 public class ClientControl {
 
@@ -22,11 +25,12 @@ public class ClientControl {
     private int serverPort = 1234;
     private int rmiPort = 1099;
     private Socket connection;
-    private User user = new User();
-    private UserState state = new UserState();
     // import objects
     private ChatView chatView;
     private LoginView loginView;
+    private User user = new User();
+    private UserState state = new UserState();
+    private MessageModel messageModel = new MessageModel();
     private ArrayList<User> list;
 
     public ClientControl(String serverName, int serverPort) {
@@ -42,11 +46,15 @@ public class ClientControl {
                 openLogin();
             }
             while (true) {
+                if (state.getCurrentState() == UserState.LOGGED) {
+                    openChat();
+                    state.setCurrentState(UserState.CONNECTED);
+                }
                 if (state.getCurrentState() == UserState.CONNECTED) {
                     // send message
                     OutputStream outToServer = connection.getOutputStream();
                     DataOutputStream out = new DataOutputStream(outToServer);
-                    out.writeUTF("[Client] Hello from " + connection.getLocalSocketAddress());
+//                    out.writeUTF("[Client] Hello from " + connection.getLocalSocketAddress());
                     // get message
                     InputStream inFromServer = connection.getInputStream();
                     DataInputStream in = new DataInputStream(inFromServer);
@@ -75,15 +83,34 @@ public class ClientControl {
                 String password = loginView.jPassword.getText();
                 user = new User(username, password);
                 if (checkLogin(user)) {
-                    state.setCurrentState(UserState.CONNECTED);
+                    // Xử lý logic khi đăng nhập thành công
+                    JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    // Đổi trạng thái
+                    state.setCurrentState(UserState.LOGGED);
+                    // Đóng view
+                    loginView.dispose();
                     // Huỷ lắng nghe sự kiện
                     loginView.jLogin.removeActionListener(this);
-                    JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     // Xử lý logic khi đăng nhập không thành công
                     JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        });
+    }
+
+    private void openChat() {
+        chatView = new ChatView();
+        chatView.setVisible(true);
+        chatView.jTextMessage.addActionListener((ActionEvent e) -> {
+            messageModel = new MessageModel(user.getUsername(), chatView.jTextMessage.getText(), new Date());
+            sendMessage(chatView.jTextArea, messageModel);
+            chatView.jTextMessage.setText("");
+        });
+        chatView.jSend.addActionListener((ActionEvent e) -> {
+            messageModel = new MessageModel(user.getUsername(), chatView.jTextMessage.getText(), new Date());
+            sendMessage(chatView.jTextArea, messageModel);
+            chatView.jTextMessage.setText("");
         });
     }
 
@@ -94,5 +121,16 @@ public class ClientControl {
             }
         }
         return false;
+    }
+
+    public void sendMessage(JTextArea jTextArea, MessageModel messageModel) {
+        // Cập nhật tin nhắn mới trong JTextArea
+        String senderName = messageModel.getName();
+        String sentTime = new SimpleDateFormat("HH:mm:ss").format(messageModel.getTime());
+        String message = messageModel.getMessage();
+        String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
+        jTextArea.append(newMessage);
+        // Cuộn xuống cuối tin nhắn mới
+        jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
     }
 }

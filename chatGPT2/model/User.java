@@ -19,10 +19,12 @@ public class User implements Serializable {
     public ArrayList<User> loadUserData() {
         ArrayList<User> list;
         list = new ArrayList<>();
-        list.add(new User("0987654321", "111111"));
-        list.add(new User("0988888888", "111111"));
-        list.add(new User("0977777777", "111111"));
-        list.add(new User("0987575701", "111111"));
+        list.add(new User("admin", "123"));
+        list.add(new User("test", "123"));
+        list.add(new User("chung", "123"));
+        list.add(new User("dinh", "123"));
+        list.add(new User("kyanh", "123"));
+        list.add(new User("duc", "123"));
         return list;
     }
 
