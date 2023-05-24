@@ -75,6 +75,7 @@ public class ServerControl {
             }
             if (this.state == UserState.CONNECTED) {
                 serverView = new chatServerView(connection, server);
+                serverView.sendMessage("hello");
                 serverView.chatting();
             }
         } catch (IOException | ClassNotFoundException ex) {

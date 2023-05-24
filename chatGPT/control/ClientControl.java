@@ -65,7 +65,7 @@ public class ClientControl {
             if (this.state == UserState.CONNECTED) {
                 System.out.println("1 times");
                 clientView = new chatClientView(connection, client);
-//                clientView.chatting();
+                //clientView.chatting();
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);

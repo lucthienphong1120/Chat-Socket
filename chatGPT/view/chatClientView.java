@@ -2,6 +2,8 @@ package chatGPT.view;
 
 import chatGPT.control.*;
 import chatGPT.model.Message;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,16 +17,53 @@ public class chatClientView extends javax.swing.JFrame {
     Encryption enc = new Encryption();
     Socket connection;
     Message client;
-    
+
     public chatClientView() {
         initComponents();
     }
-    
+
     public chatClientView(Socket connection, Message client) {
         initComponents();
         this.setVisible(true);
         this.connection = connection;
         this.client = client;
+        this.addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                chatting();
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -139,8 +178,9 @@ public class chatClientView extends javax.swing.JFrame {
     public void chatting() {
         String message = "";
         System.out.println("client chat");
-        do {
-            try {
+        int i = 0;
+        try {
+            do {
                 DataInputStream input = new DataInputStream(connection.getInputStream());
                 String data = (String) input.readUTF();
                 String rname = data.split("\\|")[0];
@@ -151,10 +191,11 @@ public class chatClientView extends javax.swing.JFrame {
                     message = "Can't decrypt the message, check the secret key again";
                 }
                 client.printMessage(chatArea, rname, message);
-            } catch (IOException ex) {
-                Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } while (!message.equals("END"));
+                i++;
+            } while (i < 100);
+        } catch (IOException ex) {
+            Logger.getLogger(chatServerView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void sendMessage(String message) {

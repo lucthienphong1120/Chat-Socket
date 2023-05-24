@@ -112,7 +112,9 @@ public class ChatView extends javax.swing.JFrame {
 
     public void sendMessage(String message) {
         // Cập nhật tin nhắn mới trong JTextArea
-        String newMessage = "Tên người gửi: " + message + "\n";
+        String senderName = "Name";
+        String sentTime = "10:00:00";
+        String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
         jTextArea1.append(newMessage);
         // Cuộn xuống cuối tin nhắn mới
         jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
