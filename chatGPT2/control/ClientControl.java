@@ -23,7 +23,7 @@ public class ClientControl {
     private int rmiPort = 1099;
     private Socket connection;
     private User user = new User();
-    private int state;
+    private UserState state = new UserState();
     // import objects
     private ChatView chatView;
     private LoginView loginView;
@@ -32,26 +32,36 @@ public class ClientControl {
     public ClientControl(String serverName, int serverPort) {
         this.serverName = serverName;
         this.serverPort = serverPort;
-        this.state = UserState.NOT_LOGIN;
         list = user.loadUserData();
     }
 
     public void connecting() {
         try {
             connection = new Socket(serverName, serverPort);
-            openLogin();
-            // send message
-            while (this.state == UserState.NOT_LOGIN) {
-                OutputStream outToServer = connection.getOutputStream();
-                DataOutputStream out = new DataOutputStream(outToServer);
-                out.writeUTF("[Client] Hello from " + connection.getLocalSocketAddress());
-                // get message
-                InputStream inFromServer = connection.getInputStream();
-                DataInputStream in = new DataInputStream(inFromServer);
-                System.out.println(in.readUTF());
+            if (state.getCurrentState() == UserState.NOT_LOGIN) {
+                openLogin();
             }
-        } catch (IOException ex) {
+            while (true) {
+                if (state.getCurrentState() == UserState.CONNECTED) {
+                    // send message
+                    OutputStream outToServer = connection.getOutputStream();
+                    DataOutputStream out = new DataOutputStream(outToServer);
+                    out.writeUTF("[Client] Hello from " + connection.getLocalSocketAddress());
+                    // get message
+                    InputStream inFromServer = connection.getInputStream();
+                    DataInputStream in = new DataInputStream(inFromServer);
+                    System.out.println(in.readUTF());
+                }
+                Thread.sleep(500);
+            }
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -65,6 +75,7 @@ public class ClientControl {
                 String password = loginView.jPassword.getText();
                 user = new User(username, password);
                 if (checkLogin(user)) {
+                    state.setCurrentState(UserState.CONNECTED);
                     // Huỷ lắng nghe sự kiện
                     loginView.jLogin.removeActionListener(this);
                     JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);

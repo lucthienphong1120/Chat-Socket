@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerControl {
+
     // import global variables
     private int serverPort = 1234;
     private int totalClients = 5;
@@ -54,17 +55,27 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            // get message
-            InputStream inFromClient = clientSock.getInputStream();
-            DataInputStream in = new DataInputStream(inFromClient);
-            System.out.println(in.readUTF());
-            // send message
-            OutputStream outToClient = clientSock.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToClient);
-            out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
-            
-        } catch (IOException ex) {
-            Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
+            while (true) {
+                // get message
+                InputStream inFromClient = clientSock.getInputStream();
+                DataInputStream in = new DataInputStream(inFromClient);
+                System.out.println(in.readUTF());
+                // send message
+                OutputStream outToClient = clientSock.getOutputStream();
+                DataOutputStream out = new DataOutputStream(outToClient);
+                out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
+
+                Thread.sleep(500);
+            }
+
+        } catch (IOException | InterruptedException ex) {
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                clientSock.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
