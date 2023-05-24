@@ -1,4 +1,4 @@
-package rmi;
+package learn.RMISample;
 
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
