@@ -1,9 +1,10 @@
 package chatGPT2.control;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import chatGPT2.model.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -47,6 +48,7 @@ public class ServerControl {
 class ClientHandler implements Runnable {
 
     private Socket clientSock;
+    private int clientState = 0;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
@@ -55,20 +57,19 @@ class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
+            // get message
+            InputStream inFromClient = clientSock.getInputStream();
+            ObjectInputStream in = new ObjectInputStream(inFromClient);
+            // send message
+            OutputStream outToClient = clientSock.getOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(outToClient);
             while (true) {
-                // get message
-                InputStream inFromClient = clientSock.getInputStream();
-                DataInputStream in = new DataInputStream(inFromClient);
-                System.out.println(in.readUTF());
-                // send message
-                OutputStream outToClient = clientSock.getOutputStream();
-                DataOutputStream out = new DataOutputStream(outToClient);
-//                out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
+                User user = (User) in.readObject();
+                System.out.println(user.getUsername() + " " + user.getPassword());
 
                 Thread.sleep(500);
             }
-
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException | InterruptedException | ClassNotFoundException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

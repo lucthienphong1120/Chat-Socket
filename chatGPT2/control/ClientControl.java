@@ -4,10 +4,11 @@ import chatGPT2.view.*;
 import chatGPT2.model.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -42,23 +43,23 @@ public class ClientControl {
     public void connecting() {
         try {
             connection = new Socket(serverName, serverPort);
+            // send message
+            OutputStream outToServer = connection.getOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(outToServer);
+            // get message
+            InputStream inFromServer = connection.getInputStream();
+            ObjectInputStream in = new ObjectInputStream(inFromServer);
             if (state.getCurrentState() == UserState.NOT_LOGIN) {
                 openLogin();
             }
             while (true) {
                 if (state.getCurrentState() == UserState.LOGGED) {
                     openChat();
+                    out.writeObject(user);
                     state.setCurrentState(UserState.CONNECTED);
                 }
                 if (state.getCurrentState() == UserState.CONNECTED) {
-                    // send message
-                    OutputStream outToServer = connection.getOutputStream();
-                    DataOutputStream out = new DataOutputStream(outToServer);
-//                    out.writeUTF("[Client] Hello from " + connection.getLocalSocketAddress());
-                    // get message
-                    InputStream inFromServer = connection.getInputStream();
-                    DataInputStream in = new DataInputStream(inFromServer);
-                    System.out.println(in.readUTF());
+                    // xử lý gì đó
                 }
                 Thread.sleep(500);
             }
