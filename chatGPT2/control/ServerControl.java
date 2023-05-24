@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 
 public class ServerControl {
     // import global variables
-    private int serverPort;
-    private int totalClients;
-    private int rmiPort;
+    private int serverPort = 1234;
+    private int totalClients = 5;
+    private int rmiPort = 1099;
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects

@@ -18,10 +18,11 @@ import javax.swing.JOptionPane;
 public class ClientControl {
 
     // import global variables
-    private String serverName;
-    private int serverPort;
+    private String serverName = "localhost";
+    private int serverPort = 1234;
+    private int rmiPort = 1099;
     private Socket connection;
-    private User user;
+    private User user = new User();
     private int state;
     // import objects
     private ChatView chatView;
@@ -32,7 +33,7 @@ public class ClientControl {
         this.serverName = serverName;
         this.serverPort = serverPort;
         this.state = UserState.NOT_LOGIN;
-        this.loadUserData();
+        list = user.loadUserData();
     }
 
     public void connecting() {
@@ -73,14 +74,6 @@ public class ClientControl {
                 }
             }
         });
-    }
-
-    private void loadUserData() {
-        list = new ArrayList<>();
-        list.add(new User("0987654321", "111111"));
-        list.add(new User("0988888888", "111111"));
-        list.add(new User("0977777777", "111111"));
-        list.add(new User("0987575701", "111111"));
     }
 
     public boolean checkLogin(User user) {
