@@ -1,5 +1,6 @@
-package server;
+package lab3.control;
 
+import lab3.model.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class AvailableUserImpl extends UnicastRemoteObject implements AvailableU
 		this.setAvailableUsers(availableUsers);
 	}
 
+        @Override
 	public ArrayList<String> getAllAvailableUsers() throws RemoteException{
 		ArrayList<String> allAvailUsers = new ArrayList<String>();
 		for(User u : availableUsers) {
