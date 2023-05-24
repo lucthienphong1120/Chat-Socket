@@ -2,10 +2,7 @@ package lab3.control;
 
 import lab3.model.*;
 import lab3.view.*;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.AlreadyBoundException;

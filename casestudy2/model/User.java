@@ -28,6 +28,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof User) {
             User user = (User) obj;

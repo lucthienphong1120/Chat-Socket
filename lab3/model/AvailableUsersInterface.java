@@ -1,9 +1,10 @@
-package lab3.control;
+package lab3.model;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public interface AvailableUsersInterface extends Remote {
-	public ArrayList<String> getAllAvailableUsers() throws RemoteException;
+
+    public ArrayList<String> getAllAvailableUsers() throws RemoteException;
 }
