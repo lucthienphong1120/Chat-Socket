@@ -27,5 +27,15 @@ public class User implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof User) {
+            User user = (User) obj;
+            return this.username.equals(user.getUsername())
+                    && this.password.equals(user.getPassword());
+        }
+        return false;
+    }
+    
 }

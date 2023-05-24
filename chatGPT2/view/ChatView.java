@@ -12,7 +12,7 @@ public class ChatView extends javax.swing.JFrame {
 
         Title = new javax.swing.JLabel();
         jChatPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        jSend = new javax.swing.JButton();
         jTextMessage = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
@@ -27,10 +27,10 @@ public class ChatView extends javax.swing.JFrame {
 
         jChatPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jButton1.setText("SEND");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jSend.setText("SEND");
+        jSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jSendActionPerformed(evt);
             }
         });
 
@@ -48,7 +48,7 @@ public class ChatView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jTextMessage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(jSend)
                 .addContainerGap())
         );
         jChatPanelLayout.setVerticalGroup(
@@ -57,7 +57,7 @@ public class ChatView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jChatPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextMessage)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
+                    .addComponent(jSend, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -91,7 +91,7 @@ public class ChatView extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(190, 190, 190)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jChatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -104,11 +104,11 @@ public class ChatView extends javax.swing.JFrame {
         jTextMessage.setText("");
     }//GEN-LAST:event_jTextMessageActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSendActionPerformed
         // TODO add your handling code here:
         sendMessage(jTextMessage.getText());
         jTextMessage.setText("");
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jSendActionPerformed
 
     public void sendMessage(String message) {
         // Cập nhật tin nhắn mới trong JTextArea
@@ -157,10 +157,10 @@ public class ChatView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Title;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jChatPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jSend;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextMessage;
     // End of variables declaration//GEN-END:variables

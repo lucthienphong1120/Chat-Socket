@@ -75,6 +75,5 @@ public class ClientControl {
                 control.view.showMessage(false, "You got a validation error!");
             }
         }
-
     }
 }
