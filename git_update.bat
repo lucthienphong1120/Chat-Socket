@@ -1,6 +1,8 @@
 @echo off
+color 2
 
 REM Step 1: Git pull
+echo Pull the lastest news from Github...
 git pull
 
 REM Check if git pull encountered an error
@@ -11,15 +13,16 @@ if errorlevel 1 (
 )
 
 REM Step 2: Git add -A
+echo Add current change to git
 git add -A
 
 REM Step 3: User input for commit message
 set /p message="Enter commit message: "
-
-REM Step 4: Git commit
 git commit -m "%message%"
 
-REM Step 5: Git push
+REM Step 4: Git push
+echo Push all changes to Github...
 git push
 
 REM End of script
+pause
