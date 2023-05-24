@@ -63,10 +63,9 @@ public class ClientControl {
                 }
             }
             if (this.state == UserState.CONNECTED) {
-                connection.close();
                 System.out.println("1 times");
-                clientView = new chatClientView(serverName, port, client);
-                clientView.chatting();
+                clientView = new chatClientView(connection, client);
+//                clientView.chatting();
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);

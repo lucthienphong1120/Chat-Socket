@@ -68,14 +68,12 @@ public class ServerControl {
                     this.controlView.showMessage(("New client connect at " + connection.getInetAddress().getHostAddress()));
                     output.writeBoolean(true);
                     this.state = UserState.CONNECTED;
-                    connection.close();
                 } else {
                     output.writeBoolean(false);
                 }
                 output.flush();
             }
             if (this.state == UserState.CONNECTED) {
-                connection = serverSocket.accept();
                 serverView = new chatServerView(connection, server);
                 serverView.chatting();
             }

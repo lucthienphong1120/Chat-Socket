@@ -14,19 +14,16 @@ public class chatClientView extends javax.swing.JFrame {
 
     Encryption enc = new Encryption();
     Socket connection;
-    private String serverName = "localhost";
-    private int port = 1234;
     Message client;
-
+    
     public chatClientView() {
         initComponents();
     }
     
-    public chatClientView(String serverName, int port, Message client) {
+    public chatClientView(Socket connection, Message client) {
         initComponents();
         this.setVisible(true);
-        this.serverName = serverName;
-        this.port = port;
+        this.connection = connection;
         this.client = client;
     }
 
@@ -144,7 +141,6 @@ public class chatClientView extends javax.swing.JFrame {
         System.out.println("client chat");
         do {
             try {
-                connection = new Socket(serverName, port);
                 DataInputStream input = new DataInputStream(connection.getInputStream());
                 String data = (String) input.readUTF();
                 String rname = data.split("\\|")[0];
