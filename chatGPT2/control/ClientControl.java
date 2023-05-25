@@ -115,7 +115,9 @@ public class ClientControl {
         ActionListener e = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                messageModel = new MessageModel(user.getName(), chatView.jTextMessage.getText(), new Date());
+                messageModel = new MessageModel(user.getName(),
+                        chatView.jTextMessage.getText(),
+                        new SimpleDateFormat("HH:mm:ss").format(new Date()));
                 sendMessage(chatView.jTextArea, messageModel);
                 chatView.jTextMessage.setText("");
             }
@@ -141,7 +143,7 @@ public class ClientControl {
             objOutput.writeObject(messageModel);
             // Cập nhật tin nhắn mới trong JTextArea
             String senderName = messageModel.getName();
-            String sentTime = new SimpleDateFormat("HH:mm:ss").format(messageModel.getTime());
+            String sentTime = messageModel.getTime();
             String message = messageModel.getMessage();
             String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
             jTextArea.append(newMessage);

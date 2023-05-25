@@ -1,18 +1,17 @@
 package chatGPT2.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class MessageModel implements Serializable {
 
-    private String name = "";
+    private String name = "Anonymous";
     private String message = "";
-    private Date time;
+    private String time = "00:00:00";
 
     public MessageModel() {
     }
 
-    public MessageModel(String name, String message, Date time) {
+    public MessageModel(String name, String message, String time) {
         this.name = name;
         this.message = message;
         this.time = time;
@@ -34,11 +33,11 @@ public class MessageModel implements Serializable {
         this.message = message;
     }
 
-    public Date getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
