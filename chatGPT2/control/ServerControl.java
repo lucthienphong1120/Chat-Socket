@@ -68,8 +68,15 @@ class ClientHandler implements Runnable {
             outToClient = clientSock.getOutputStream();
             objOutput = new ObjectOutputStream(outToClient);
             while (true) {
-                User user = (User) objInput.readObject();
-                System.out.println(user.getUsername() + " " + user.getPassword());
+                Object obj = objInput.readObject();
+                if (obj instanceof User) {
+                    User user = (User) obj;
+                    System.out.println(user.getUsername() + " " + user.getPassword());
+                }
+                if (obj instanceof MessageModel) {
+                    MessageModel messageModel = (MessageModel) obj;
+                    System.out.println(messageModel.getName() + " " + messageModel.getMessage());
+                }
 
                 Thread.sleep(500);
             }

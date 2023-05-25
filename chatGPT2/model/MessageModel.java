@@ -1,8 +1,9 @@
 package chatGPT2.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class MessageModel {
+public class MessageModel implements Serializable {
 
     private String name = "";
     private String message = "";

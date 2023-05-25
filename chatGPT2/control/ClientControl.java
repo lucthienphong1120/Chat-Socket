@@ -134,13 +134,19 @@ public class ClientControl {
     }
 
     public void sendMessage(JTextArea jTextArea, MessageModel messageModel) {
-        // Cập nhật tin nhắn mới trong JTextArea
-        String senderName = messageModel.getName();
-        String sentTime = new SimpleDateFormat("HH:mm:ss").format(messageModel.getTime());
-        String message = messageModel.getMessage();
-        String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
-        jTextArea.append(newMessage);
-        // Cuộn xuống cuối tin nhắn mới
-        jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
+        try {
+            // Gửi thông tin tin nhắn cho server
+            objOutput.writeObject(messageModel);
+            // Cập nhật tin nhắn mới trong JTextArea
+            String senderName = messageModel.getName();
+            String sentTime = new SimpleDateFormat("HH:mm:ss").format(messageModel.getTime());
+            String message = messageModel.getMessage();
+            String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
+            jTextArea.append(newMessage);
+            // Cuộn xuống cuối tin nhắn mới
+            jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
+        } catch (IOException ex) {
+            Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
