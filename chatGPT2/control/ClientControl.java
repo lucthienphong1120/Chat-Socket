@@ -26,9 +26,9 @@ public class ClientControl {
     private int rmiPort = 1099;
     private Socket connection;
     OutputStream outToServer;
-    ObjectOutputStream out;
+    ObjectOutputStream objOutput;
     InputStream inFromServer;
-    ObjectInputStream in;
+    ObjectInputStream objInput;
     // import objects
     private ChatView chatView;
     private LoginView loginView;
@@ -48,17 +48,17 @@ public class ClientControl {
             connection = new Socket(serverName, serverPort);
             // send message
             outToServer = connection.getOutputStream();
-            out = new ObjectOutputStream(outToServer);
+            objOutput = new ObjectOutputStream(outToServer);
             // get message
             inFromServer = connection.getInputStream();
-            in = new ObjectInputStream(inFromServer);
+            objInput = new ObjectInputStream(inFromServer);
             if (state.getCurrentState() == UserState.NOT_LOGIN) {
                 openLogin();
             }
             while (true) {
                 if (state.getCurrentState() == UserState.LOGGED) {
                     openChat();
-                    out.writeObject(user);
+                    objOutput.writeObject(user);
                     state.setCurrentState(UserState.CONNECTED);
                 }
                 if (state.getCurrentState() == UserState.CONNECTED) {
@@ -72,8 +72,8 @@ public class ClientControl {
             try {
                 inFromServer.close();
                 outToServer.close();
-                in.close();
-                out.close();
+                objInput.close();
+                objOutput.close();
                 connection.close();
             } catch (IOException ex) {
                 Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);

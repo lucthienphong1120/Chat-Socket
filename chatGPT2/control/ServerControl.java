@@ -50,9 +50,9 @@ class ClientHandler implements Runnable {
     // import global variables
     private Socket clientSock;
     OutputStream outToClient;
-    ObjectOutputStream out;
+    ObjectOutputStream objOutput;
     InputStream inFromClient;
-    ObjectInputStream in;
+    ObjectInputStream objInput;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
@@ -63,12 +63,12 @@ class ClientHandler implements Runnable {
         try {
             // get message
             inFromClient = clientSock.getInputStream();
-            in = new ObjectInputStream(inFromClient);
+            objInput = new ObjectInputStream(inFromClient);
             // send message
             outToClient = clientSock.getOutputStream();
-            out = new ObjectOutputStream(outToClient);
+            objOutput = new ObjectOutputStream(outToClient);
             while (true) {
-                User user = (User) in.readObject();
+                User user = (User) objInput.readObject();
                 System.out.println(user.getUsername() + " " + user.getPassword());
 
                 Thread.sleep(500);
@@ -79,8 +79,8 @@ class ClientHandler implements Runnable {
             try {
                 inFromClient.close();
                 outToClient.close();
-                in.close();
-                out.close();
+                objInput.close();
+                objOutput.close();
                 clientSock.close();
             } catch (IOException ex) {
                 Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
