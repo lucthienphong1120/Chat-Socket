@@ -4,7 +4,6 @@ import chatGPT2.view.*;
 import chatGPT2.model.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -26,6 +25,10 @@ public class ClientControl {
     private int serverPort = 1234;
     private int rmiPort = 1099;
     private Socket connection;
+    OutputStream outToServer;
+    ObjectOutputStream out;
+    InputStream inFromServer;
+    ObjectInputStream in;
     // import objects
     private ChatView chatView;
     private LoginView loginView;
@@ -44,11 +47,11 @@ public class ClientControl {
         try {
             connection = new Socket(serverName, serverPort);
             // send message
-            OutputStream outToServer = connection.getOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(outToServer);
+            outToServer = connection.getOutputStream();
+            out = new ObjectOutputStream(outToServer);
             // get message
-            InputStream inFromServer = connection.getInputStream();
-            ObjectInputStream in = new ObjectInputStream(inFromServer);
+            inFromServer = connection.getInputStream();
+            in = new ObjectInputStream(inFromServer);
             if (state.getCurrentState() == UserState.NOT_LOGIN) {
                 openLogin();
             }
@@ -67,6 +70,10 @@ public class ClientControl {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
+                inFromServer.close();
+                outToServer.close();
+                in.close();
+                out.close();
                 connection.close();
             } catch (IOException ex) {
                 Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,7 +84,7 @@ public class ClientControl {
     private void openLogin() {
         loginView = new LoginView();
         loginView.setVisible(true);
-        loginView.jLogin.addActionListener(new ActionListener() {
+        ActionListener e = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = loginView.jUsername.getText();
@@ -97,22 +104,24 @@ public class ClientControl {
                     JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });
+        };
+        loginView.jPassword.addActionListener(e);
+        loginView.jLogin.addActionListener(e);
     }
 
     private void openChat() {
         chatView = new ChatView();
         chatView.setVisible(true);
-        chatView.jTextMessage.addActionListener((ActionEvent e) -> {
-            messageModel = new MessageModel(user.getUsername(), chatView.jTextMessage.getText(), new Date());
-            sendMessage(chatView.jTextArea, messageModel);
-            chatView.jTextMessage.setText("");
-        });
-        chatView.jSend.addActionListener((ActionEvent e) -> {
-            messageModel = new MessageModel(user.getUsername(), chatView.jTextMessage.getText(), new Date());
-            sendMessage(chatView.jTextArea, messageModel);
-            chatView.jTextMessage.setText("");
-        });
+        ActionListener e = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                messageModel = new MessageModel(user.getUsername(), chatView.jTextMessage.getText(), new Date());
+                sendMessage(chatView.jTextArea, messageModel);
+                chatView.jTextMessage.setText("");
+            }
+        };
+        chatView.jTextMessage.addActionListener(e);
+        chatView.jSend.addActionListener(e);
     }
 
     public boolean checkLogin(User user) {
