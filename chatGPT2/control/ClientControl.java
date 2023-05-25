@@ -115,7 +115,7 @@ public class ClientControl {
         ActionListener e = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                messageModel = new MessageModel(user.getUsername(), chatView.jTextMessage.getText(), new Date());
+                messageModel = new MessageModel(user.getName(), chatView.jTextMessage.getText(), new Date());
                 sendMessage(chatView.jTextArea, messageModel);
                 chatView.jTextMessage.setText("");
             }
@@ -125,8 +125,10 @@ public class ClientControl {
     }
 
     public boolean checkLogin(User user) {
-        for (User u : list) {
-            if (u.equals(user)) {
+        for (User availableUser : list) {
+            if (user.getUsername().equals(availableUser.getUsername())
+                    && user.getPassword().equals(availableUser.getPassword())) {
+                user.setName(availableUser.getName());
                 return true;
             }
         }

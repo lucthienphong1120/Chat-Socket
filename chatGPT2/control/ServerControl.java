@@ -71,7 +71,7 @@ class ClientHandler implements Runnable {
                 Object obj = objInput.readObject();
                 if (obj instanceof User) {
                     User user = (User) obj;
-                    System.out.println(user.getUsername() + " " + user.getPassword());
+                    System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
                 }
                 if (obj instanceof MessageModel) {
                     MessageModel messageModel = (MessageModel) obj;

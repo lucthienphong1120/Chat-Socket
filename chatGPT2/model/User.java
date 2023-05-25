@@ -5,13 +5,20 @@ import java.util.ArrayList;
 
 public class User implements Serializable {
 
+    private String name = "";
     private String username = "";
     private String password = "";
 
-    public User() {
+    public User() { // constructor for create object
+    }
+    
+    public User(String username, String password) { // constructor for check login
+        this.username = username;
+        this.password = password;
     }
 
-    public User(String username, String password) {
+    public User(String name, String username, String password) {  // constructor for full object
+        this.name = name;
         this.username = username;
         this.password = password;
     }
@@ -19,13 +26,21 @@ public class User implements Serializable {
     public ArrayList<User> loadUserData() {
         ArrayList<User> list;
         list = new ArrayList<>();
-        list.add(new User("admin", "123"));
-        list.add(new User("test", "123"));
-        list.add(new User("chung", "123"));
-        list.add(new User("dinh", "123"));
-        list.add(new User("kyanh", "123"));
-        list.add(new User("duc", "123"));
+        list.add(new User("Admin", "admin", "123"));
+        list.add(new User("Test", "test", "123"));
+        list.add(new User("Chung", "chung", "123"));
+        list.add(new User("Dinh", "dinh", "123"));
+        list.add(new User("Ky Anh", "kyanh", "123"));
+        list.add(new User("Duck", "duc", "123"));
         return list;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUsername() {
@@ -43,15 +58,5 @@ public class User implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj != null && obj instanceof User) {
-            User user = (User) obj;
-            return this.username.equals(user.getUsername())
-                    && this.password.equals(user.getPassword());
-        }
-        return false;
-    }
-
+    
 }
