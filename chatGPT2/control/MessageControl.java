@@ -1,25 +1,24 @@
 package chatGPT2.control;
 
 import chatGPT2.model.*;
-import java.io.BufferedReader;
 import java.io.File;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.JSONArray;
 
 public class MessageControl {
 
     private String fileName;
+    private JSONArray jsonArray;
 
     public MessageControl(String fileName) {
         this.fileName = fileName;
+        jsonArray = new JSONArray();
         createFile();
         resetFile();
         // Đăng ký sự kiện xoá file khi đóng chương trình
@@ -33,31 +32,26 @@ public class MessageControl {
         jsonObject.put("message", message.getMessage());
         jsonObject.put("time", message.getTime());
 
-        try (FileWriter fileWriter = new FileWriter(fileName, true)) {
-            fileWriter.write(jsonObject.toJSONString() + "\n");
+        jsonArray.add(jsonObject);
+        try (FileWriter fileWriter = new FileWriter(fileName, false)) {
+            fileWriter.write(jsonArray.toJSONString() + "\n");
         } catch (IOException ex) {
             Logger.getLogger(MessageControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public List<MessageModel> loadAllMessages() {
+    public List<MessageModel> loadMessages() {
         List<MessageModel> listMessage = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            JSONParser jsonParser = new JSONParser();
-            while ((line = reader.readLine()) != null) {
-                JSONObject jsonObject = (JSONObject) jsonParser.parse(line);
-                String name = (String) jsonObject.get("name");
-                String message = (String) jsonObject.get("message");
-                String time = (String) jsonObject.get("time");
-                listMessage.add(new MessageModel(name, message, time));
-            }
-        } catch (IOException | ParseException ex) {
-            Logger.getLogger(MessageControl.class.getName()).log(Level.SEVERE, null, ex);
+        for (Object obj : jsonArray) {
+            JSONObject jsonObject = (JSONObject) obj;
+            String name = (String) jsonObject.get("name");
+            String message = (String) jsonObject.get("message");
+            String time = (String) jsonObject.get("time");
+            listMessage.add(new MessageModel(name, message, time));
         }
         return listMessage;
     }
-    
+
     private void createFile() {
         File file = new File(fileName);
         if (!file.exists()) {
@@ -77,7 +71,7 @@ public class MessageControl {
             Logger.getLogger(MessageControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void deleteFile() {
         File file = new File(fileName);
         if (file.exists()) {
