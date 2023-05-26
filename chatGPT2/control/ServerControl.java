@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,9 @@ class ClientHandler implements Runnable {
     ObjectOutputStream objOutput;
     InputStream inFromClient;
     ObjectInputStream objInput;
+    // import object
+    MessageControl messageControl = new MessageControl("./src/message_logs.json");
+    List<MessageModel> listMessage;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
@@ -68,6 +72,7 @@ class ClientHandler implements Runnable {
             outToClient = clientSock.getOutputStream();
             objOutput = new ObjectOutputStream(outToClient);
             while (true) {
+                // get data from client
                 Object obj = objInput.readObject();
                 if (obj instanceof User) {
                     User user = (User) obj;
@@ -76,6 +81,14 @@ class ClientHandler implements Runnable {
                 if (obj instanceof MessageModel) {
                     MessageModel messageModel = (MessageModel) obj;
                     System.out.println(messageModel.getName() + " " + messageModel.getMessage());
+                    // write file
+                    messageControl.saveMessage(messageModel);
+                }
+                // send data to client
+                listMessage = messageControl.loadMessages();
+                if (!listMessage.isEmpty()) {
+                    objOutput.writeObject(listMessage);
+                    objOutput.flush();
                 }
 
                 Thread.sleep(500);

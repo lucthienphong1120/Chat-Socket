@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -36,6 +37,7 @@ public class ClientControl {
     private UserState state = new UserState();
     private MessageModel messageModel = new MessageModel();
     private ArrayList<User> list;
+    List<MessageModel> messageList;
 
     public ClientControl(String serverName, int serverPort) {
         this.serverName = serverName;
@@ -58,15 +60,30 @@ public class ClientControl {
             while (true) {
                 if (state.getCurrentState() == UserState.LOGGED) {
                     openChat();
+                    // send data to server
                     objOutput.writeObject(user);
+                    objOutput.flush();
                     state.setCurrentState(UserState.CONNECTED);
                 }
                 if (state.getCurrentState() == UserState.CONNECTED) {
-                    // xử lý gì đó
+                    // get data from server
+                    Object obj = objInput.readObject();
+                    if (obj instanceof List<?>) {
+                        List<?> receivedList = (List<?>) obj;
+                        if (!receivedList.isEmpty() && receivedList.get(0) instanceof MessageModel) {
+                            messageList = (List<MessageModel>) obj;
+                            System.out.println(messageList.size());
+                        } else {
+                            System.out.println("Received object is not a List of MessageModel");
+                        }
+                    } else {
+                        System.out.println("Received object is not a List");
+                    }
                 }
+
                 Thread.sleep(500);
             }
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException | InterruptedException | ClassNotFoundException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -141,6 +158,7 @@ public class ClientControl {
         try {
             // Gửi thông tin tin nhắn cho server
             objOutput.writeObject(messageModel);
+            objOutput.flush();
             // Cập nhật tin nhắn mới trong JTextArea
             String senderName = messageModel.getName();
             String sentTime = messageModel.getTime();

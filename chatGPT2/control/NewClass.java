@@ -6,7 +6,7 @@ import java.util.List;
 public class NewClass {
 
     public static void main(String[] args) {
-        MessageControl messageControl = new MessageControl("./src/data.json");
+        MessageControl messageControl = new MessageControl("./src/message_logs.json");
         // write file
         messageControl.saveMessage(new MessageModel("test 1", "test", "test"));
         messageControl.saveMessage(new MessageModel("test 2", "test", "test"));
