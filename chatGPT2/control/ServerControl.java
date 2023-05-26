@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +22,6 @@ public class ServerControl {
     private Socket connection;
     // import objects
     MessageControl messageControl = new MessageControl("./src/message_logs.json");
-    List<ObjectOutputStream> clientOutputs = new ArrayList<>();
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -40,10 +38,7 @@ public class ServerControl {
             while (true) {
                 connection = serverSocket.accept();
                 System.out.println("New client connected");
-                // lưu objOutput của client vào danh sách
-                ObjectOutputStream objOutput = new ObjectOutputStream(connection.getOutputStream());
-                clientOutputs.add(objOutput);
-                // tạo thread và đưa cho ClientHandler xử lý
+
                 ClientHandler clientHandler = new ClientHandler(connection);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
