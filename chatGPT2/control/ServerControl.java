@@ -21,6 +21,7 @@ public class ServerControl {
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects
+    MessageControl messageControl = new MessageControl("./src/message_logs.json");
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -31,6 +32,8 @@ public class ServerControl {
         try {
             serverSocket = new ServerSocket(serverPort, totalClients);
             System.out.println("Server is listening on port " + serverPort);
+            messageControl.createFile();
+            messageControl.resetFile();
 
             while (true) {
                 connection = serverSocket.accept();
@@ -42,6 +45,13 @@ public class ServerControl {
             }
         } catch (IOException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                serverSocket.close();
+                messageControl.deleteFile();
+            } catch (IOException ex) {
+                Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
