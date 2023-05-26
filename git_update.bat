@@ -1,5 +1,4 @@
 @echo off
-color 2
 
 REM Step 1: Git pull
 echo [!] Pull the lastest news from Github...
@@ -26,6 +25,7 @@ git commit -m "%message%"
 echo .
 
 REM Step 4: Git push
+color 2
 echo [!] Push all changes to Github...
 git push
 echo .

@@ -144,7 +144,7 @@ public class ChatView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Title;
+    public javax.swing.JLabel Title;
     private javax.swing.JPanel jChatPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

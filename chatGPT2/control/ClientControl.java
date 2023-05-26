@@ -129,6 +129,7 @@ public class ClientControl {
     private void openChat() {
         chatView = new ChatView();
         chatView.setVisible(true);
+        chatView.Title.setText("Welcome back " + user.getName());
         ActionListener e = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
