@@ -88,20 +88,43 @@ public class ServerControl {
 
 class ClientHandler implements Runnable {
 
+    // import special variables
+    private Socket clientSock;
+    private static ArrayList<ClientHandler> instances = new ArrayList<>();
     // import global variables
-    Socket clientSock;
     OutputStream outToClient;
     ObjectOutputStream objOutput;
     InputStream inFromClient;
     ObjectInputStream objInput;
+    boolean login = false;
     // import object
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
-    private ArrayList<ObjectOutputStream> clientOutputs = new ArrayList<>();
     List<MessageModel> listMessage;
     ServerInterface serverRMI;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
+        addInstance();
+    }
+
+    private synchronized void addInstance() {
+        ClientHandler.instances.add(this);
+    }
+
+    private synchronized void removeInstance() {
+        ClientHandler.instances.remove(this);
+    }
+
+    private synchronized void broadcastMessage(Object obj) throws IOException {
+        for (ClientHandler client : instances) {
+            ObjectOutputStream out = client.getObjectOutputStream();
+            out.writeObject(obj);
+            out.flush();
+        }
+    }
+
+    public ObjectOutputStream getObjectOutputStream() {
+        return objOutput;
     }
 
     private void connectRMI() {
@@ -125,11 +148,11 @@ class ClientHandler implements Runnable {
             while (clientSock.isConnected()) {
                 // get data from client
                 Object obj = objInput.readObject();
-                if (obj instanceof UserModel) {
+                if (!login && obj instanceof UserModel) {
                     UserModel user = (UserModel) obj;
                     System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
                     serverRMI.addOnlineUser(user);
-                    serverRMI.addClientOutput(objOutput);
+                    login = true;
                 }
                 if (obj instanceof MessageModel) {
                     MessageModel messageModel = (MessageModel) obj;
@@ -138,15 +161,11 @@ class ClientHandler implements Runnable {
                     messageControl.saveMessage(messageModel);
                 }
                 // send data to client
-                clientOutputs = serverRMI.getClientOutputs();
                 listMessage = messageControl.loadMessages();
-                if (!clientOutputs.isEmpty()) {
-                    for (ObjectOutputStream client : clientOutputs) {
-                        if (!listMessage.isEmpty()) {
-                            client.writeObject(listMessage);
-                            client.flush();
-                        }
-                    }
+                if (!listMessage.isEmpty()) {
+//                    objOutput.writeObject(listMessage);
+//                    objOutput.flush();
+                    broadcastMessage(listMessage);
                 }
 
                 Thread.sleep(500);

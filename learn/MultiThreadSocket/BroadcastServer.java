@@ -48,26 +48,33 @@ class ClientHandler implements Runnable {
     private Socket clientSock;
     private static ArrayList<ClientHandler> instances = new ArrayList<>();
 
+    InputStream inFromClient;
+    DataInputStream in;
+    OutputStream outToClient;
+    DataOutputStream out;
+
     public ClientHandler(Socket clientSocket) {
         clientSock = clientSocket;
         //add this to the arraylist, one instance/thread for every connection.
-        add();
+        addInstance();
     }
 
-    private synchronized void add() {
+    private synchronized void addInstance() {
         ClientHandler.instances.add(this);
     }
 
-    private synchronized void remove() {
+    private synchronized void removeInstance() {
         ClientHandler.instances.remove(this);
     }
 
-    private synchronized void broadcast(String message) throws IOException {
+    public DataOutputStream getDataOutputStream() {
+        return out;
+    }
+
+    private synchronized void broadcastMessage(String message) throws IOException {
         for (ClientHandler client : instances) {
-            OutputStream outToClient = client.clientSock.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToClient);
+            DataOutputStream out = client.getDataOutputStream();
             out.writeUTF(message);
-            out.flush();
         }
     }
 
@@ -75,15 +82,15 @@ class ClientHandler implements Runnable {
     public void run() {
         try {
             // get message
-            InputStream inFromClient = clientSock.getInputStream();
-            DataInputStream in = new DataInputStream(inFromClient);
+            inFromClient = clientSock.getInputStream();
+            in = new DataInputStream(inFromClient);
             String inMessage = in.readUTF();
             System.out.println(inMessage);
             // send message
-            OutputStream outToClient = clientSock.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToClient);
+            outToClient = clientSock.getOutputStream();
+            out = new DataOutputStream(outToClient);
             out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
-            broadcast("[Broadcast] There are " + instances.size() + " total clients!");
+            broadcastMessage("[Broadcast] There are " + instances.size() + " total clients!");
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SocketClient {
+public class SocketClientTest {
 
     public static void main(String[] args) {
         try {
@@ -26,7 +26,7 @@ public class SocketClient {
             }
 //            socket.close();
         } catch (IOException ex) {
-            Logger.getLogger(SocketClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SocketClientTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

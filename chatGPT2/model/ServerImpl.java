@@ -39,27 +39,4 @@ public class ServerImpl extends UnicastRemoteObject implements ServerInterface {
         }
     }
 
-    @Override
-    public ArrayList<ObjectOutputStream> getClientOutputs() throws RemoteException {
-        return clientOutputs;
-    }
-
-    @Override
-    public void addClientOutput(ObjectOutputStream objOut) throws RemoteException {
-        if (!clientOutputs.contains(objOut)) {
-            clientOutputs.add(objOut);
-        } else {
-            System.out.println("Error: objOut adready in list !");
-        }
-    }
-
-    @Override
-    public void removeClientOutput(ObjectOutputStream objOut) throws RemoteException {
-        if (clientOutputs.contains(objOut)) {
-            clientOutputs.remove(objOut);
-        } else {
-            System.out.println("Error: objOut not in list !");
-        }
-    }
-
 }
