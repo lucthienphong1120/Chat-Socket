@@ -16,13 +16,13 @@ public class SocketClient {
             Socket socket = new Socket("localhost", 1234);
             // send message
             while (true) {
-            OutputStream outToServer = socket.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToServer);
-            out.writeUTF("[Client] Hello from " + socket.getLocalSocketAddress());
-            // get message
-            InputStream inFromServer = socket.getInputStream();
-            DataInputStream in = new DataInputStream(inFromServer);
-            System.out.println(in.readUTF());
+                OutputStream outToServer = socket.getOutputStream();
+                DataOutputStream out = new DataOutputStream(outToServer);
+                out.writeUTF("[Client] Hello from " + socket.getLocalSocketAddress());
+                // get message
+                InputStream inFromServer = socket.getInputStream();
+                DataInputStream in = new DataInputStream(inFromServer);
+                System.out.println(in.readUTF());
             }
 //            socket.close();
         } catch (IOException ex) {

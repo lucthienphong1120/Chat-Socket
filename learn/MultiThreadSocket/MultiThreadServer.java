@@ -23,7 +23,6 @@ public class MultiThreadServer {
                 System.out.println("New client connected");
 
                 // Tạo một luồng xử lý riêng cho mỗi client bằng Thread Runnable
-                // new Thread(new Runnable(clientSocket).start();
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
@@ -50,11 +49,13 @@ class ClientHandler implements Runnable { // allows instances of it to be execut
             // get message
             InputStream inFromClient = clientSock.getInputStream();
             DataInputStream in = new DataInputStream(inFromClient);
-            System.out.println(in.readUTF());
+            String inMessage = in.readUTF();
+            System.out.println(inMessage);
             // send message
             OutputStream outToClient = clientSock.getOutputStream();
             DataOutputStream out = new DataOutputStream(outToClient);
             out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
+            out.flush();
 //            clientSock.close();
         } catch (IOException ex) {
             Logger.getLogger(MultiThreadServer.class.getName()).log(Level.SEVERE, null, ex);

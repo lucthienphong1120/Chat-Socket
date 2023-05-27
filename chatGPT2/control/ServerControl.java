@@ -6,13 +6,17 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.AlreadyBoundException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,19 +25,22 @@ public class ServerControl {
     // import global variables
     private int serverPort = 1234;
     private int totalClients = 5;
-    private int rmiPort = 1099;
     private String rmiField = "server";
+    private int rmiPort = 1099;
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects
     MessageControl messageControl;
 
-    public ServerControl(int serverPort, int totalClients, String rmiField, int rmiPort) {
+    public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
         this.totalClients = totalClients;
-        this.rmiField = rmiField;
-        this.rmiPort = rmiPort;
+    }
+
+    private void setupFile() {
         messageControl = new MessageControl("./src/message_logs.log");
+        messageControl.createFile();
+        messageControl.resetFile();
         // Đăng ký sự kiện xoá file khi đóng chương trình
         Runtime.getRuntime().addShutdownHook(new Thread(messageControl::deleteFile));
     }
@@ -53,8 +60,7 @@ public class ServerControl {
             // setup anything
             serverSocket = new ServerSocket(serverPort, totalClients);
             System.out.println("[i] Server is listening on port " + serverPort);
-            messageControl.createFile();
-            messageControl.resetFile();
+            setupFile();
             System.out.println("[i] Log file are created and ready for conversation");
             setupRMI();
             System.out.println("[i] RMI is listening on port " + rmiPort);
@@ -83,22 +89,33 @@ public class ServerControl {
 class ClientHandler implements Runnable {
 
     // import global variables
-    private Socket clientSock;
+    Socket clientSock;
     OutputStream outToClient;
     ObjectOutputStream objOutput;
     InputStream inFromClient;
     ObjectInputStream objInput;
     // import object
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
+    private ArrayList<ObjectOutputStream> clientOutputs = new ArrayList<>();
     List<MessageModel> listMessage;
+    ServerInterface serverRMI;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
     }
 
+    private void connectRMI() {
+        try {
+            serverRMI = (ServerInterface) Naming.lookup("rmi://localhost:1099/server");
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @Override
     public void run() {
         try {
+            connectRMI();
             // get message
             inFromClient = clientSock.getInputStream();
             objInput = new ObjectInputStream(inFromClient);
@@ -111,6 +128,8 @@ class ClientHandler implements Runnable {
                 if (obj instanceof UserModel) {
                     UserModel user = (UserModel) obj;
                     System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
+                    serverRMI.addOnlineUser(user);
+                    serverRMI.addClientOutput(objOutput);
                 }
                 if (obj instanceof MessageModel) {
                     MessageModel messageModel = (MessageModel) obj;
@@ -119,10 +138,15 @@ class ClientHandler implements Runnable {
                     messageControl.saveMessage(messageModel);
                 }
                 // send data to client
+                clientOutputs = serverRMI.getClientOutputs();
                 listMessage = messageControl.loadMessages();
-                if (!listMessage.isEmpty()) {
-                    objOutput.writeObject(listMessage);
-                    objOutput.flush();
+                if (!clientOutputs.isEmpty()) {
+                    for (ObjectOutputStream client : clientOutputs) {
+                        if (!listMessage.isEmpty()) {
+                            client.writeObject(listMessage);
+                            client.flush();
+                        }
+                    }
                 }
 
                 Thread.sleep(500);

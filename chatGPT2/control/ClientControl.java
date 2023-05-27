@@ -9,11 +9,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,8 +24,6 @@ public class ClientControl {
     // import global variables
     private String serverName = "localhost";
     private int serverPort = 1234;
-    private String rmiField = "server";
-    private int rmiPort = 1099;
     private Socket connection;
     OutputStream outToServer;
     ObjectOutputStream objOutput;
@@ -41,30 +35,18 @@ public class ClientControl {
     private UserModel user = new UserModel();
     private MessageModel messageModel = new MessageModel();
     private ArrayList<UserModel> list;
-    private ServerInterface serverRMI;
     List<MessageModel> messageList;
 
-    public ClientControl(String serverName, int serverPort, String rmiField, int rmiPort) {
+    public ClientControl(String serverName, int serverPort) {
         this.serverName = serverName;
         this.serverPort = serverPort;
-        this.rmiField = rmiField;
-        this.rmiPort = rmiPort;
         list = user.loadUserData();
-    }
-
-    private void connectRMI() {
-        try {
-            serverRMI = (ServerInterface) Naming.lookup("rmi://" + serverName + ":" + rmiPort + "/" + rmiField);
-        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
-            Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public void connecting() {
         try {
             // open connections
             connection = new Socket(serverName, serverPort);
-            connectRMI();
             // send message
             outToServer = connection.getOutputStream();
             objOutput = new ObjectOutputStream(outToServer);
