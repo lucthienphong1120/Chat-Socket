@@ -1,23 +1,28 @@
-package lab3.control;
+package finalLab.control;
 
-import lab3.model.*;
-import lab3.view.*;
-import java.io.*;
+import finalLab.model.*;
+import finalLab.view.ServerView;
+import java.io.ObjectInputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.AlreadyBoundException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.rmi.RemoteException;
+import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.HashMap;
 
 public class ServerControl {
 
     private ArrayList<User> listActiveAccounts;
     private ArrayList<User> availableAccounts;
     public AvailableUsersInterface availUsers;
+    private HashMap<String, ClientNotificationInterface> listRMIClients;
 
     private int serverPort;
     private ServerSocket myServer;
@@ -26,14 +31,13 @@ public class ServerControl {
 
     public ServerControl(ServerView view) {
         this.view = view;
-        listActiveAccounts = new ArrayList<User>();
-        availableAccounts = new ArrayList<User>();
-        listActiveAccounts.add(new User("0987654321", "111111"));
-        listActiveAccounts.add(new User("0988888888", "111111"));
-        listActiveAccounts.add(new User("0977777777", "111111"));
-        listActiveAccounts.add(new User("0987575701", "111111"));
+        listActiveAccounts = new ArrayList<>();
+        availableAccounts = new ArrayList<>();
+        listRMIClients = new HashMap<>();
+        listActiveAccounts = ServerDBControl.getAllUsers();
         try {
             availUsers = new AvailableUserImpl(availableAccounts);
+            availUsers.updateServerControl(this);
             Registry registry = LocateRegistry.createRegistry(789);
             registry.bind("availUsers", availUsers);
             System.out.println("Dang ky thanh cong availUsers");
@@ -42,22 +46,54 @@ public class ServerControl {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private boolean checkAlreadyLogin(User user) {
-        boolean found = false;
+
+    private int checkAlreadyLogin(User user) {
+        int index = 0;
         for (User u : this.availableAccounts) {
             if (u.equals(user)) {
-                found = true;
-                break;
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
+
+    private void addAvailableUser(User user) {
+        int index = this.checkAlreadyLogin(user);
+        if (index == -1) {
+            this.availableAccounts.add(user);
+            //Cap nhat status trong listActiveAccounts            
+            for (int i = 0; i < listActiveAccounts.size(); i++) {
+                if (listActiveAccounts.get(i).equals(user)) {
+                    user.setStatus("on");
+                    listActiveAccounts.set(i, user);
+                    break;
+                }
+            }
+            for (int i = 0; i < this.availableAccounts.size(); i++) {
+                if (!this.availableAccounts.get(i).
+                        getUsername().equals(user.getUsername())) {
+                    ClientNotificationInterface client = this.listRMIClients.get(this.availableAccounts.get(i).
+                            getUsername());
+                    try {
+                        client.notifyOnOff(user.getUsername(), true);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         }
-        return found;
     }
-    
-    private void addAvailableUser(User user) {
-        boolean found = this.checkAlreadyLogin(user);
-        if (!found) {
-            this.availableAccounts.add(user);
+
+    public void addRMIClientInterface(User user) {
+        try {
+            ClientNotificationInterface client
+                    = (ClientNotificationInterface) Naming.lookup("rmi://localhost:"
+                            + user.getPort() + "/" + user.getUsername());
+            this.listRMIClients.put(user.getUsername(), client);
+            System.out.println(this.listRMIClients.size());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -73,16 +109,13 @@ public class ServerControl {
 
                 ObjectInputStream ois = new ObjectInputStream(socketFromClient.getInputStream());
                 Object obj = (Object) ois.readObject();
-                if (obj instanceof Serializable) {
-                    Serializable s = (Serializable) obj;
-                    System.out.println(s.toString());
-                }
                 User user = (User) obj;
                 System.out.println(obj.toString());
-                
+
                 OutputStream output = socketFromClient.getOutputStream();
                 PrintWriter writer = new PrintWriter(output, true);
                 if (this.checkLogin(user)) {
+                    user.setStatus("on");
                     this.view.showMessage("New Client Connected");
                     this.addAvailableUser(user);
                     writer.print("Success");
@@ -103,7 +136,7 @@ public class ServerControl {
     }
 
     public boolean checkLogin(User user) {
-        if (checkAlreadyLogin(user))//neu user da dang nhap roi thi khong cho dang nhap lan nua
+        if (checkAlreadyLogin(user) != -1)//neu user da dang nhap roi thi khong cho dang nhap lan nua
         {
             return false;
         }

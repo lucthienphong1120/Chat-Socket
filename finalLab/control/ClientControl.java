@@ -1,9 +1,11 @@
-package lab3.control;
+package finalLab.control;
 
-import lab3.model.*;
-import lab3.view.*;
+import finalLab.model.*;
+import finalLab.view.ClientView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.io.*;
 import java.rmi.Naming;
 import java.net.Socket;
@@ -30,6 +32,16 @@ public class ClientControl {
             this.control = control;
         }
 
+        public void registry(String username, int port) {
+            try {
+                Registry registry = LocateRegistry.createRegistry(port);
+                registry.rebind(username, new ClientNotificationImpl());
+                System.out.println("Client lien lac voi Registry thanh cong");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             //Lấy thông tin đăng nhập ở ClientView
@@ -51,14 +63,21 @@ public class ClientControl {
                     if (response.equals("Success")) {
                         control.view.showMessage(true, "Login successfully!");
                         System.out.println("User " + model.getUsername() + " logins sucessfully");
+                        registry(model.getUsername(), model.getPort());
+                        
                         AvailableUsersInterface availUsers
                                 = (AvailableUsersInterface) Naming.lookup("rmi://localhost:789/availUsers");
                         ArrayList<String> allOtherUsers = availUsers.getAllAvailableUsers();
-                        for (String name : allOtherUsers) {
-                            if (!name.equals(model.getUsername())) {
-                                System.out.println("\t Available user " + name);
+                        if (allOtherUsers != null && !allOtherUsers.isEmpty()) {
+                            for (String name : allOtherUsers) {
+                                if (!name.equals(model.getUsername())) {
+                                    System.out.println("\t Available user " + name);
+                                }
                             }
+                        } else {
+                            System.out.println("\t No one in the room!");
                         }
+                        availUsers.updateRMIClient(model);
                     } else {
                         control.view.showMessage(false, "Invalid username and/or password!");
                     }

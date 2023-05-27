@@ -1,7 +1,7 @@
-package lab3.main;
+package finalLab.main;
 
-import lab3.control.*;
-import lab3.view.*;
+import finalLab.control.ClientControl;
+import finalLab.view.ClientView;
 
 public class ClientRun {
 

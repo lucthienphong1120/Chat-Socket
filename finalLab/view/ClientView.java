@@ -1,7 +1,7 @@
-package lab3.view;
+package finalLab.view;
 
-import lab3.control.*;
-import lab3.model.*;
+import finalLab.control.ClientControl;
+import finalLab.model.User;
 import javax.swing.JOptionPane;
 
 public class ClientView extends javax.swing.JFrame {

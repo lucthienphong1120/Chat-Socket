@@ -1,7 +1,7 @@
-package lab3.main;
+package finalLab.main;
 
-import lab3.control.*;
-import lab3.view.*;
+import finalLab.control.ServerControl;
+import finalLab.view.ServerView;
 
 public class ServerRun {
 

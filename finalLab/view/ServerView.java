@@ -1,4 +1,4 @@
-package lab3.view;
+package finalLab.view;
 
 public class ServerView {
 

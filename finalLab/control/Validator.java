@@ -1,6 +1,6 @@
-package lab3.control;
+package finalLab.control;
 
-import lab3.model.*;
+import finalLab.model.*;
 
 public class Validator {
 

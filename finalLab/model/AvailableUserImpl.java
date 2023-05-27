@@ -1,16 +1,14 @@
-package lab3.model;
+package finalLab.model;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import finalLab.control.ServerControl;
 
 public class AvailableUserImpl extends UnicastRemoteObject implements AvailableUsersInterface {
 
     private ArrayList<User> availableUsers;
-
-    private void setAvailableUsers(ArrayList<User> availableUsers) {
-        this.availableUsers = availableUsers;
-    }
+    private ServerControl control;
 
     private static final long serialVersionUID = -6018722832052878923L;
 
@@ -31,6 +29,20 @@ public class AvailableUserImpl extends UnicastRemoteObject implements AvailableU
             }
         }
         return allAvailUsers;
+    }
+
+    private void setAvailableUsers(ArrayList<User> availableUsers) {
+        this.availableUsers = availableUsers;
+    }
+
+    @Override
+    public void updateRMIClient(User user) throws RemoteException {
+        control.addRMIClientInterface(user);
+    }
+
+    @Override
+    public void updateServerControl(ServerControl control) throws RemoteException {
+        this.control = control;
     }
 
 }

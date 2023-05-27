@@ -1,4 +1,4 @@
-package lab3.model;
+package finalLab.model;
 
 public class Constant {
     public static final String INVALID = "Invalid";
