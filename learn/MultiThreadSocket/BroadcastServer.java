@@ -64,21 +64,14 @@ class ClientHandler implements Runnable {
         ClientHandler.instances.remove(this);
     }
 
-    private synchronized void sendMessage(String message) {
-        try {
-            OutputStream outToClient = clientSock.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToClient);
-            out.writeUTF(message);
-            out.flush();
-        } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private synchronized void broadcast(String message) {
+    private synchronized void broadcast(String message) throws IOException {
         for (ClientHandler client : instances) {
-//            if (this == client) continue;
-            client.sendMessage(message);
+            try (DataOutputStream out = new DataOutputStream(client.clientSock.getOutputStream())) {
+                out.writeUTF(message);
+                out.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -95,8 +88,10 @@ class ClientHandler implements Runnable {
             DataOutputStream out = new DataOutputStream(outToClient);
             out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
             broadcast("[Broadcast] There are " + instances.size() + " total clients!");
+
         } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientHandler.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

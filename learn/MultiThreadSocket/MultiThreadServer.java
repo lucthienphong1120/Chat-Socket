@@ -61,4 +61,8 @@ class ClientHandler implements Runnable { // allows instances of it to be execut
             Logger.getLogger(MultiThreadServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    private OutputStream getOutputStream() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
