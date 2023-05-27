@@ -8,6 +8,8 @@ public class UserModel implements Serializable {
     private String name = "Anonymous";
     private String username = "";
     private String password = "";
+    private boolean online = false;
+    private boolean loggin = false;
 
     public UserModel() { // constructor for create object
     }
@@ -57,6 +59,22 @@ public class UserModel implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public boolean isLoggin() {
+        return loggin;
+    }
+
+    public void setLoggin(boolean loggin) {
+        this.loggin = loggin;
     }
     
 }

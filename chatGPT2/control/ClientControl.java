@@ -34,7 +34,6 @@ public class ClientControl {
     private ChatView chatView;
     private LoginView loginView;
     private UserModel user = new UserModel();
-    private Status status = new Status();
     private MessageModel messageModel = new MessageModel();
     private ArrayList<UserModel> list;
     List<MessageModel> messageList;
@@ -54,18 +53,17 @@ public class ClientControl {
             // get message
             inFromServer = connection.getInputStream();
             objInput = new ObjectInputStream(inFromServer);
-            if (status.getCurrentState() == Status.NOT_LOGIN) {
+            if (!user.isLoggin() && !user.isOnline()) {
                 openLogin();
             }
             while (true) {
-                if (status.getCurrentState() == Status.PREPARE) {
+                if (user.isLoggin() && !user.isOnline()) {
                     openChat();
                     // send data to server
                     objOutput.writeObject(user);
                     objOutput.flush();
-                    status.setCurrentState(Status.CONNECTED);
                 }
-                if (status.getCurrentState() == Status.CONNECTED) {
+                if (user.isLoggin() && user.isOnline()) {
                     // get data from server
                     Object obj = objInput.readObject();
                     if (obj instanceof List<?>) {
@@ -111,7 +109,7 @@ public class ClientControl {
                     // Xử lý logic khi đăng nhập thành công
                     JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                     // Đổi trạng thái
-                    status.setCurrentState(Status.PREPARE);
+                    user.setLoggin(true);;
                     // Đóng view
                     loginView.dispose();
                     // Huỷ lắng nghe sự kiện
@@ -130,6 +128,7 @@ public class ClientControl {
         chatView = new ChatView();
         chatView.setVisible(true);
         chatView.Title.setText("Welcome back " + user.getName());
+        user.setOnline(true);
         ActionListener e = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
