@@ -71,6 +71,7 @@ public class ClientControl {
                         if (!receivedList.isEmpty() && receivedList.get(0) instanceof MessageModel) {
                             messageList = (List<MessageModel>) obj;
                             System.out.println(messageList.size());
+                            updateMessage(messageList);
                         } else {
                             System.out.println("Received object is not a List of MessageModel");
                         }
@@ -135,7 +136,7 @@ public class ClientControl {
                 messageModel = new MessageModel(user.getName(),
                         chatView.jTextMessage.getText(),
                         new SimpleDateFormat("HH:mm:ss").format(new Date()));
-                sendMessage(chatView.jTextArea, messageModel);
+                sendMessage(messageModel);
                 chatView.jTextMessage.setText("");
             }
         };
@@ -154,21 +155,36 @@ public class ClientControl {
         return false;
     }
 
-    public void sendMessage(JTextArea jTextArea, MessageModel messageModel) {
+    public void sendMessage(MessageModel messageModel) {
         try {
             // Gửi thông tin tin nhắn cho server
             objOutput.writeObject(messageModel);
             objOutput.flush();
-            // Cập nhật tin nhắn mới trong JTextArea
+//            String senderName = messageModel.getName();
+//            String sentTime = messageModel.getTime();
+//            String message = messageModel.getMessage();
+//            // Cập nhật tin nhắn mới trong JTextArea
+//            String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
+//            chatView.jTextArea.append(newMessage);
+//            // Cuộn xuống cuối tin nhắn mới
+//            chatView.jTextArea.setCaretPosition(chatView.jTextArea.getDocument().getLength());
+        } catch (IOException ex) {
+            Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateMessage(List<MessageModel> messageList) {
+        for (MessageModel messageModel : messageList) {
             String senderName = messageModel.getName();
             String sentTime = messageModel.getTime();
             String message = messageModel.getMessage();
             String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
-            jTextArea.append(newMessage);
-            // Cuộn xuống cuối tin nhắn mới
-            jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
-        } catch (IOException ex) {
-            Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+            if (!chatView.jTextArea.getText().contains(newMessage)) {
+                // Cập nhật tin nhắn mới trong JTextArea
+                chatView.jTextArea.append(newMessage);
+                // Cuộn xuống cuối tin nhắn mới
+                chatView.jTextArea.setCaretPosition(chatView.jTextArea.getDocument().getLength());
+            }
         }
     }
 
