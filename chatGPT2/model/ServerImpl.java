@@ -6,27 +6,40 @@ import java.util.ArrayList;
 
 public class ServerImpl extends UnicastRemoteObject implements ServerInterface {
 
-    private ArrayList<UserModel> availableUsers;
-
     private static final long serialVersionUID = -6018722832052878923L;
+
+    private ArrayList<UserModel> onlineUsers = new ArrayList<>();
 
     public ServerImpl() throws RemoteException {
         // TODO Auto-generated constructor stub
     }
 
-    public ServerImpl(ArrayList<UserModel> availableUsers) throws RemoteException {
-        this.availableUsers = availableUsers;
+    @Override
+    public ArrayList<UserModel> getOnlineUsers() throws RemoteException {
+        return onlineUsers;
     }
 
     @Override
-    public ArrayList<String> getAllAvailableUsers() throws RemoteException {
-        ArrayList<String> allAvailUsers = new ArrayList<>();
-        for (UserModel u : availableUsers) {
-            if (!allAvailUsers.contains(u.getUsername())) {
-                allAvailUsers.add(u.getUsername());
-            }
+    public void updateOnlineUsers(ArrayList<UserModel> onlineUsers) throws RemoteException {
+        this.onlineUsers = onlineUsers;
+    }
+
+    @Override
+    public void addOnlineUsers(UserModel user) throws RemoteException {
+        if (!onlineUsers.contains(user)) {
+            onlineUsers.add(user);
+        } else {
+            System.out.println("Error: user adready in list !");
         }
-        return allAvailUsers;
+    }
+
+    @Override
+    public void removeOnlineUsers(UserModel user) throws RemoteException {
+        if (onlineUsers.contains(user)) {
+            onlineUsers.remove(user);
+        } else {
+            System.out.println("Error: user not in list !");
+        }
     }
 
 }

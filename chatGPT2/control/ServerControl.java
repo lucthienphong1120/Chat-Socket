@@ -8,7 +8,11 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
 import java.util.List;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,22 +22,42 @@ public class ServerControl {
     private int serverPort = 1234;
     private int totalClients = 5;
     private int rmiPort = 1099;
+    private String rmiField = "server";
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects
-    MessageControl messageControl = new MessageControl("./src/message_logs.log");
+    MessageControl messageControl;
 
-    public ServerControl(int serverPort, int totalClients) {
+    public ServerControl(int serverPort, int totalClients, String rmiField, int rmiPort) {
         this.serverPort = serverPort;
         this.totalClients = totalClients;
+        this.rmiField = rmiField;
+        this.rmiPort = rmiPort;
+        messageControl = new MessageControl("./src/message_logs.log");
+        // Đăng ký sự kiện xoá file khi đóng chương trình
+        Runtime.getRuntime().addShutdownHook(new Thread(messageControl::deleteFile));
+    }
+
+    private void setupRMI() {
+        try {
+            ServerInterface serverRMI = new ServerImpl();
+            Registry registry = LocateRegistry.createRegistry(rmiPort);
+            registry.bind(rmiField, serverRMI);
+        } catch (RemoteException | AlreadyBoundException ex) {
+            Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void listening() {
         try {
+            // setup anything
             serverSocket = new ServerSocket(serverPort, totalClients);
-            System.out.println("Server is listening on port " + serverPort);
+            System.out.println("[i] Server is listening on port " + serverPort);
             messageControl.createFile();
             messageControl.resetFile();
+            System.out.println("[i] Log file are created and ready for conversation");
+            setupRMI();
+            System.out.println("[i] RMI is listening on port " + rmiPort);
 
             while (true) {
                 connection = serverSocket.accept();
@@ -81,7 +105,7 @@ class ClientHandler implements Runnable {
             // send message
             outToClient = clientSock.getOutputStream();
             objOutput = new ObjectOutputStream(outToClient);
-            while (true) {
+            while (clientSock.isConnected()) {
                 // get data from client
                 Object obj = objInput.readObject();
                 if (obj instanceof UserModel) {

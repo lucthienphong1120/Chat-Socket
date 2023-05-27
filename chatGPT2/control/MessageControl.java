@@ -21,8 +21,8 @@ public class MessageControl {
         this.fileName = fileName;
 //        createFile();
 //        resetFile();
-        // Đăng ký sự kiện xoá file khi đóng chương trình
-        Runtime.getRuntime().addShutdownHook(new Thread(this::deleteFile));
+//        // Đăng ký sự kiện xoá file khi đóng chương trình
+//        Runtime.getRuntime().addShutdownHook(new Thread(this::deleteFile));
     }
 
     public void saveMessage(MessageModel message) {
