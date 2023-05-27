@@ -22,7 +22,7 @@ public class MessageControl {
 //        createFile();
 //        resetFile();
         // Đăng ký sự kiện xoá file khi đóng chương trình
-//        Runtime.getRuntime().addShutdownHook(new Thread(this::deleteFile));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::deleteFile));
     }
 
     public void saveMessage(MessageModel message) {

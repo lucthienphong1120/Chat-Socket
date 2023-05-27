@@ -3,35 +3,35 @@ package chatGPT2.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class User implements Serializable {
+public class UserModel implements Serializable {
 
     private String name = "Anonymous";
     private String username = "";
     private String password = "";
 
-    public User() { // constructor for create object
+    public UserModel() { // constructor for create object
     }
     
-    public User(String username, String password) { // constructor for check login
+    public UserModel(String username, String password) { // constructor for check login user
         this.username = username;
         this.password = password;
     }
 
-    public User(String name, String username, String password) {  // constructor for full object
+    public UserModel(String name, String username, String password) {  // constructor for full object
         this.name = name;
         this.username = username;
         this.password = password;
     }
 
-    public ArrayList<User> loadUserData() {
-        ArrayList<User> list;
+    public ArrayList<UserModel> loadUserData() {
+        ArrayList<UserModel> list;
         list = new ArrayList<>();
-        list.add(new User("Admin", "admin", "123"));
-        list.add(new User("Test", "test", "123"));
-        list.add(new User("Chung", "chung", "123"));
-        list.add(new User("Dinh", "dinh", "123"));
-        list.add(new User("Ky Anh", "kyanh", "123"));
-        list.add(new User("Duck", "duc", "123"));
+        list.add(new UserModel("Admin", "admin", "123"));
+        list.add(new UserModel("Test", "test", "123"));
+        list.add(new UserModel("Chung", "chung", "123"));
+        list.add(new UserModel("Dinh", "dinh", "123"));
+        list.add(new UserModel("Ky Anh", "kyanh", "123"));
+        list.add(new UserModel("Duck", "duc", "123"));
         return list;
     }
 

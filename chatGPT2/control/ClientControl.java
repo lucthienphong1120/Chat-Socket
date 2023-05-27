@@ -33,10 +33,10 @@ public class ClientControl {
     // import objects
     private ChatView chatView;
     private LoginView loginView;
-    private User user = new User();
-    private UserState state = new UserState();
+    private UserModel user = new UserModel();
+    private Status status = new Status();
     private MessageModel messageModel = new MessageModel();
-    private ArrayList<User> list;
+    private ArrayList<UserModel> list;
     List<MessageModel> messageList;
 
     public ClientControl(String serverName, int serverPort) {
@@ -54,18 +54,18 @@ public class ClientControl {
             // get message
             inFromServer = connection.getInputStream();
             objInput = new ObjectInputStream(inFromServer);
-            if (state.getCurrentState() == UserState.NOT_LOGIN) {
+            if (status.getCurrentState() == Status.NOT_LOGIN) {
                 openLogin();
             }
             while (true) {
-                if (state.getCurrentState() == UserState.LOGGED) {
+                if (status.getCurrentState() == Status.PREPARE) {
                     openChat();
                     // send data to server
                     objOutput.writeObject(user);
                     objOutput.flush();
-                    state.setCurrentState(UserState.CONNECTED);
+                    status.setCurrentState(Status.CONNECTED);
                 }
-                if (state.getCurrentState() == UserState.CONNECTED) {
+                if (status.getCurrentState() == Status.CONNECTED) {
                     // get data from server
                     Object obj = objInput.readObject();
                     if (obj instanceof List<?>) {
@@ -106,12 +106,12 @@ public class ClientControl {
             public void actionPerformed(ActionEvent e) {
                 String username = loginView.jUsername.getText();
                 String password = loginView.jPassword.getText();
-                user = new User(username, password);
+                user = new UserModel(username, password);
                 if (checkLogin(user)) {
                     // Xử lý logic khi đăng nhập thành công
                     JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                     // Đổi trạng thái
-                    state.setCurrentState(UserState.LOGGED);
+                    status.setCurrentState(Status.PREPARE);
                     // Đóng view
                     loginView.dispose();
                     // Huỷ lắng nghe sự kiện
@@ -144,8 +144,8 @@ public class ClientControl {
         chatView.jSend.addActionListener(e);
     }
 
-    public boolean checkLogin(User user) {
-        for (User availableUser : list) {
+    public boolean checkLogin(UserModel user) {
+        for (UserModel availableUser : list) {
             if (user.getUsername().equals(availableUser.getUsername())
                     && user.getPassword().equals(availableUser.getPassword())) {
                 user.setName(availableUser.getName());

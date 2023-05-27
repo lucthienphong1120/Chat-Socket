@@ -21,7 +21,7 @@ public class ServerControl {
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects
-    MessageControl messageControl = new MessageControl("./src/message_logs.json");
+    MessageControl messageControl = new MessageControl("./src/message_logs.log");
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -65,7 +65,7 @@ class ClientHandler implements Runnable {
     InputStream inFromClient;
     ObjectInputStream objInput;
     // import object
-    MessageControl messageControl = new MessageControl("./src/message_logs.json");
+    MessageControl messageControl = new MessageControl("./src/message_logs.log");
     List<MessageModel> listMessage;
 
     public ClientHandler(Socket clientSocket) {
@@ -84,8 +84,8 @@ class ClientHandler implements Runnable {
             while (true) {
                 // get data from client
                 Object obj = objInput.readObject();
-                if (obj instanceof User) {
-                    User user = (User) obj;
+                if (obj instanceof UserModel) {
+                    UserModel user = (UserModel) obj;
                     System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
                 }
                 if (obj instanceof MessageModel) {
