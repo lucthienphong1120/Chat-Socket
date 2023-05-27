@@ -5,11 +5,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,12 +64,10 @@ class ClientHandler implements Runnable {
 
     private synchronized void broadcast(String message) throws IOException {
         for (ClientHandler client : instances) {
-            try (DataOutputStream out = new DataOutputStream(client.clientSock.getOutputStream())) {
-                out.writeUTF(message);
-                out.flush();
-            } catch (IOException ex) {
-                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            OutputStream outToClient = client.clientSock.getOutputStream();
+            DataOutputStream out = new DataOutputStream(outToClient);
+            out.writeUTF(message);
+            out.flush();
         }
     }
 
@@ -88,10 +84,8 @@ class ClientHandler implements Runnable {
             DataOutputStream out = new DataOutputStream(outToClient);
             out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
             broadcast("[Broadcast] There are " + instances.size() + " total clients!");
-
         } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
