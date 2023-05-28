@@ -26,15 +26,15 @@ public class ServerControl {
     // import global variables
     private int serverPort = 1234;
     private int totalClients = 5;
-    private String rmiField = "server";
+    private String rmiField = "serverRMI";
     private int rmiPort = 1099;
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects
+    public RMIServerInterface serverRMI;
     private MessageControl messageControl;
+    private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
     private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
-
-    ;
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -51,7 +51,8 @@ public class ServerControl {
 
     private void setupRMI() {
         try {
-            RMIServerInterface serverRMI = new RMIServerImpl();
+            serverRMI = new RMIServerImpl(onlineAccounts);
+            serverRMI.updateServerControl(this);
             Registry registry = LocateRegistry.createRegistry(rmiPort);
             registry.bind(rmiField, serverRMI);
             System.out.println("Dang ky thanh cong serverRMI");
@@ -148,7 +149,7 @@ class ClientHandler implements Runnable {
 
     private void connectRMI() {
         try {
-            serverRMI = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/server");
+            serverRMI = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/serverRMI");
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         }

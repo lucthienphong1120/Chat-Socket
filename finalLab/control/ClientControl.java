@@ -4,12 +4,12 @@ import finalLab.model.*;
 import finalLab.view.ClientView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.io.*;
 import java.rmi.Naming;
-import java.net.Socket;
 import java.rmi.NotBoundException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,11 +32,11 @@ public class ClientControl {
             this.control = control;
         }
 
-        public void registry(String username, int port) {
+        public void createRegistry(String username, int port) {
             try {
                 Registry registry = LocateRegistry.createRegistry(port);
                 registry.rebind(username, new ClientNoticeImpl());
-                System.out.println("Client lien lac voi Registry thanh cong");
+                System.out.println("Client tao Registry thanh cong");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -63,7 +63,7 @@ public class ClientControl {
                     if (response.equals("Success")) {
                         control.view.showMessage(true, "Login successfully!");
                         System.out.println("User " + model.getUsername() + " logins sucessfully");
-                        registry(model.getUsername(), model.getPort());
+                        createRegistry(model.getUsername(), model.getPort());
                         
                         OnlineUsersInterface serverRMI
                                 = (OnlineUsersInterface) Naming.lookup("rmi://localhost:789/serverRMI");

@@ -16,23 +16,19 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
         // TODO Auto-generated constructor stub
     }
 
-    public RMIServerImpl(ArrayList<UserModel> availableUsers) throws RemoteException {
-        this.setOnlineUsers(availableUsers);
+    public RMIServerImpl(ArrayList<UserModel> onlineUsers) throws RemoteException {
+        this.onlineUsers = onlineUsers;
     }
 
     @Override
     public ArrayList<String> getAllOnlineUsers() throws RemoteException {
-        ArrayList<String> allAvailUsers = new ArrayList<String>();
+        ArrayList<String> allAvailUsers = new ArrayList<>();
         for (UserModel u : onlineUsers) {
             if (!allAvailUsers.contains(u.getUsername())) {
                 allAvailUsers.add(u.getUsername());
             }
         }
         return allAvailUsers;
-    }
-
-    private void setOnlineUsers(ArrayList<UserModel> availableUsers) {
-        this.onlineUsers = availableUsers;
     }
 
     @Override

@@ -11,7 +11,7 @@ public class UserModel implements Serializable {
     private String username = "";
     private String password = "";
     private Icon img;
-    private long port;
+    private int port;
     private boolean online = false;
     private boolean loggin = false;
 
@@ -21,7 +21,7 @@ public class UserModel implements Serializable {
     public UserModel(String username, String password) { // constructor for check login user
         this.username = username;
         this.password = password;
-        this.port = System.currentTimeMillis() % 90000 + 10000; // ramdom port by time from 10000-99999
+        this.port = (int) (System.currentTimeMillis() % 1000 + 5000); // ramdom port by time from 5000-5999
     }
 
     public UserModel(String name, String username, String password, String imgPath) {  // constructor for full object
@@ -72,17 +72,17 @@ public class UserModel implements Serializable {
     }
 
     public void setImg(String imgPath) {
-        this.img  = new ImageIcon("./src/chatGPT2/img/" + imgPath);
+        this.img = new ImageIcon("./src/chatGPT2/img/" + imgPath);
     }
 
-    public long getPort() {
+    public int getPort() {
         return port;
     }
 
-    public void setPort(long port) {
+    public void setPort(int port) {
         this.port = port;
     }
-    
+
     public boolean isOnline() {
         return online;
     }

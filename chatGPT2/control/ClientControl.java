@@ -10,7 +10,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,6 +45,16 @@ public class ClientControl {
         this.serverPort = serverPort;
     }
 
+    public void setupRMI(String username, int port) {
+        try {
+            Registry registry = LocateRegistry.createRegistry(port);
+            registry.rebind(username, new RMIClientImpl());
+            System.out.println("Client tao Registry thanh cong");
+        } catch (RemoteException ex) {
+            Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void connecting() {
         try {
             // open connections
@@ -59,6 +75,8 @@ public class ClientControl {
                     if (obj instanceof UserModel) {
                         System.out.println("login ok");
                         user = (UserModel) obj;
+                        // tạo RMI cho client
+                        setupRMI(user.getUsername(), user.getPort());
                         // Xử lý logic khi đăng nhập thành công
                         JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                         // Đổi trạng thái
@@ -75,6 +93,20 @@ public class ClientControl {
                     openChat();
                     // Đổi trạng thái
                     user.setOnline(true);
+                    // kết nối tới RMI
+                    RMIServerInterface serverRMI
+                            = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/serverRMI");
+                    ArrayList<String> allOtherUsers = serverRMI.getAllOnlineUsers();
+                    if (!allOtherUsers.isEmpty()) {
+                        for (String name : allOtherUsers) {
+                            if (!name.equals(user.getUsername())) {
+                                System.out.println("[i] Online user " + name);
+                            }
+                        }
+                    } else {
+                        System.out.println("[i] No one in the room!");
+                    }
+                    serverRMI.updateRMIClient(user);
                 }
                 if (user.isLoggin() && user.isOnline()) {
                     // get data from server
@@ -95,7 +127,7 @@ public class ClientControl {
 
                 Thread.sleep(500);
             }
-        } catch (IOException | InterruptedException | ClassNotFoundException ex) {
+        } catch (IOException | InterruptedException | ClassNotFoundException | NotBoundException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

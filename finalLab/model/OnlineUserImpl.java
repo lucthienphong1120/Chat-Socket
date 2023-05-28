@@ -16,13 +16,13 @@ public class OnlineUserImpl extends UnicastRemoteObject implements OnlineUsersIn
         // TODO Auto-generated constructor stub
     }
 
-    public OnlineUserImpl(ArrayList<User> availableUsers) throws RemoteException {
-        this.setOnlineUsers(availableUsers);
+    public OnlineUserImpl(ArrayList<User> onlineUsers) throws RemoteException {
+        this.setOnlineUsers(onlineUsers);
     }
 
     @Override
     public ArrayList<String> getAllOnlineUsers() throws RemoteException {
-        ArrayList<String> allAvailUsers = new ArrayList<String>();
+        ArrayList<String> allAvailUsers = new ArrayList<>();
         for (User u : onlineUsers) {
             if (!allAvailUsers.contains(u.getUsername())) {
                 allAvailUsers.add(u.getUsername());
