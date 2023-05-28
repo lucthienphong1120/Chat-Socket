@@ -43,20 +43,17 @@ public class ServerControl {
         }
     }
 
-    private int checkAlreadyLogin(User user) {
-        int index = 0;
-        for (User u : this.onlineAccounts) {
-            if (u.equals(user)) {
-                return index;
+    private boolean checkAlreadyLogin(User user) {
+        for (User onlineUser : onlineAccounts) {
+            if (onlineUser.equals(user)) {
+                return true;
             }
-            index++;
         }
-        return -1;
+        return false;
     }
 
     private void addOnlineUser(User user) {
-        int index = this.checkAlreadyLogin(user);
-        if (index == -1) {
+        if (!this.checkAlreadyLogin(user)) {
             this.onlineAccounts.add(user);
             //Cap nhat status trong listActiveAccounts            
             for (int i = 0; i < listAllAccounts.size(); i++) {
@@ -132,7 +129,7 @@ public class ServerControl {
     }
 
     public boolean checkLogin(User user) {
-        if (checkAlreadyLogin(user) != -1)//neu user da dang nhap roi thi khong cho dang nhap lan nua
+        if (checkAlreadyLogin(user))//neu user da dang nhap roi thi khong cho dang nhap lan nua
         {
             return false;
         }

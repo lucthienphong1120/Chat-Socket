@@ -118,7 +118,8 @@ class ClientHandler implements Runnable {
     private UserModel user = new UserModel();
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
     private ArrayList<UserModel> listAllAccounts = user.loadUserData();
-    private ArrayList<UserModel> onlineAccounts = new ArrayList<>();;
+    private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
+    ;
     List<MessageModel> listMessage;
     RMIServerInterface serverRMI;
 
@@ -169,27 +170,29 @@ class ClientHandler implements Runnable {
                 // get data from client
                 Object obj = objInput.readObject();
                 if (!login && obj instanceof UserModel) {
-                    UserModel user = (UserModel) obj;
-                    System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
-                    if (this.checkLogin(user)) {
-                        objOutput.writeBoolean(true);
+                    user = (UserModel) obj;
+                    if (checkLogin(user)) {
+                        objOutput.writeObject(user);
+//                        addOnlineUser(user);
                     } else {
-                        objOutput.writeBoolean(false);
+                        objOutput.writeObject(null);
                     }
                     login = true;
                 }
-                if (obj instanceof MessageModel) {
+                if (login && obj instanceof MessageModel) {
                     MessageModel messageModel = (MessageModel) obj;
                     System.out.println(messageModel.getName() + " " + messageModel.getMessage());
                     // write file
                     messageControl.saveMessage(messageModel);
                 }
                 // send data to client
-                listMessage = messageControl.loadMessages();
-                if (!listMessage.isEmpty()) {
+                if (login) {
+                    listMessage = messageControl.loadMessages();
+                    if (!listMessage.isEmpty()) {
 //                    objOutput.writeObject(listMessage);
 //                    objOutput.flush();
-                    broadcastMessage(listMessage);
+                        broadcastMessage(listMessage);
+                    }
                 }
 
                 Thread.sleep(500);
@@ -210,8 +213,8 @@ class ClientHandler implements Runnable {
     }
 
     public boolean checkLogin(UserModel user) {
-        //neu user da dang nhap roi thi khong cho dang nhap lan nua
-        if (checkAlreadyLogin(user) != -1) {
+        // neu user da dang nhap roi thi khong cho dang nhap lan nua
+        if (checkAlreadyLogin(user)) {
             return false;
         }
         for (UserModel availableUser : listAllAccounts) {
@@ -223,15 +226,13 @@ class ClientHandler implements Runnable {
         }
         return false;
     }
-    
-    private int checkAlreadyLogin(UserModel user) {
-        int index = 0;
-        for (UserModel u : onlineAccounts) {
-            if (u.equals(user)) {
-                return index;
+
+    private boolean checkAlreadyLogin(UserModel user) {
+        for (UserModel onlineUser : onlineAccounts) {
+            if (onlineUser.equals(user)) {
+                return true;
             }
-            index++;
         }
-        return -1;
+        return false;
     }
 }

@@ -11,7 +11,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,11 +53,30 @@ public class ClientControl {
                 openLogin();
             }
             while (connection.isConnected()) {
+                if (!user.isLoggin() && !user.isOnline()) {
+                    // nhận kết quả từ server
+                    Object obj = objInput.readObject();
+                    if (obj == null) {
+                        System.out.println("login false 1");
+                    }
+                    if (obj instanceof UserModel) {
+                        System.out.println("login ok");
+                        user = (UserModel) obj;
+                        // Xử lý logic khi đăng nhập thành công
+                        JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        // Đổi trạng thái
+                        user.setLoggin(true);;
+                        // Đóng view
+                        loginView.dispose();
+                    } else {
+                        System.out.println("login false");
+                        // Xử lý logic khi đăng nhập không thành công
+                        JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
                 if (user.isLoggin() && !user.isOnline()) {
                     openChat();
-                    // send data to server
-                    objOutput.writeObject(user);
-                    objOutput.flush();
+                    user.setOnline(true);
                 }
                 if (user.isLoggin() && user.isOnline()) {
                     // get data from server
@@ -97,33 +115,15 @@ public class ClientControl {
     private void openLogin() {
         loginView = new LoginView();
         loginView.setVisible(true);
-        ActionListener e = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String username = loginView.jUsername.getText();
-                    String password = loginView.jPassword.getText();
-                    user = new UserModel(username, password);
-                    // gửi thông tin đăng nhập cho server kiểm tra
-                    objOutput.writeObject(user);
-                    // nhận kết quả từ server
-                    boolean responseLogin = objInput.readBoolean();
-                    if (responseLogin) {
-                        // Xử lý logic khi đăng nhập thành công
-                        JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        // Đổi trạng thái
-                        user.setLoggin(true);;
-                        // Đóng view
-                        loginView.dispose();
-                        // Huỷ lắng nghe sự kiện
-                        loginView.jLogin.removeActionListener(this);
-                    } else {
-                        // Xử lý logic khi đăng nhập không thành công
-                        JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        ActionListener e = (ActionEvent e1) -> {
+            try {
+                String username = loginView.jUsername.getText();
+                String password = loginView.jPassword.getText();
+                user = new UserModel(username, password);
+                // gửi thông tin đăng nhập cho server kiểm tra
+                objOutput.writeObject(user);
+            } catch (IOException ex) {
+                Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
             }
         };
         loginView.jPassword.addActionListener(e);
@@ -135,15 +135,12 @@ public class ClientControl {
         chatView.setVisible(true);
         chatView.Title.setText("Welcome back " + user.getName());
         user.setOnline(true);
-        ActionListener e = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                messageModel = new MessageModel(user.getName(),
-                        chatView.jTextMessage.getText(),
-                        new SimpleDateFormat("HH:mm:ss").format(new Date()));
-                sendMessage(messageModel);
-                chatView.jTextMessage.setText("");
-            }
+        ActionListener e = (ActionEvent e1) -> {
+            messageModel = new MessageModel(user.getName(),
+                    chatView.jTextMessage.getText(),
+                    new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            sendMessage(messageModel);
+            chatView.jTextMessage.setText("");
         };
         chatView.jTextMessage.addActionListener(e);
         chatView.jSend.addActionListener(e);
