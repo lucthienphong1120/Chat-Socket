@@ -33,6 +33,7 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
 
     @Override
     public void updateRMIClient(UserModel user) throws RemoteException {
+        this.onlineUsers.add(user);
         control.addRMIClientInterface(user);
     }
 

@@ -65,7 +65,7 @@ public class ServerControl {
         try {
             RMIClientInterface client = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
             listRMIClients.put(user.getUsername(), client);
-            System.out.println("rmiclient size " + listRMIClients.size());
+            System.out.println("rmi client size: " + listRMIClients.size());
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -96,6 +96,7 @@ public class ClientControl {
                     // kết nối tới RMI
                     RMIServerInterface serverRMI
                             = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/serverRMI");
+                    serverRMI.updateRMIClient(user);
                     ArrayList<String> allOtherUsers = serverRMI.getAllOnlineUsers();
                     if (!allOtherUsers.isEmpty()) {
                         for (String name : allOtherUsers) {
@@ -106,7 +107,6 @@ public class ClientControl {
                     } else {
                         System.out.println("[i] No one in the room!");
                     }
-                    serverRMI.updateRMIClient(user);
                 }
                 if (user.isLoggin() && user.isOnline()) {
                     // get data from server
