@@ -56,9 +56,6 @@ public class ClientControl {
                 if (!user.isLoggin() && !user.isOnline()) {
                     // nhận kết quả từ server
                     Object obj = objInput.readObject();
-                    if (obj == null) {
-                        System.out.println("login false 1");
-                    }
                     if (obj instanceof UserModel) {
                         System.out.println("login ok");
                         user = (UserModel) obj;
@@ -76,6 +73,7 @@ public class ClientControl {
                 }
                 if (user.isLoggin() && !user.isOnline()) {
                     openChat();
+                    // Đổi trạng thái
                     user.setOnline(true);
                 }
                 if (user.isLoggin() && user.isOnline()) {

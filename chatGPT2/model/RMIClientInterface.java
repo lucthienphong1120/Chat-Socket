@@ -5,6 +5,6 @@ import java.rmi.RemoteException;
 
 public interface RMIClientInterface extends Remote {
 
-    public void notifyOnOff(String username, boolean status) throws RemoteException;
+    public void notifyOnOff(String username, boolean online) throws RemoteException;
 
 }

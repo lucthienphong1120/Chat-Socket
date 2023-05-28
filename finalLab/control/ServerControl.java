@@ -21,8 +21,8 @@ public class ServerControl {
 
     private ArrayList<User> listAllAccounts = ServerDBControl.getAllUsers();
     private ArrayList<User> onlineAccounts = new ArrayList<>();
-    public OnlineUsersInterface serverRMI;
     private HashMap<String, ClientNoticeInterface> listRMIClients = new HashMap<>();
+    public OnlineUsersInterface serverRMI;
 
     private int serverPort;
     private ServerSocket myServer;
@@ -52,7 +52,7 @@ public class ServerControl {
         return false;
     }
 
-    private void addOnlineUser(User user) {
+    private void addOnlineUser(User user) throws RemoteException {
         if (!this.checkAlreadyLogin(user)) {
             this.onlineAccounts.add(user);
             //Cap nhat status trong listActiveAccounts            
@@ -68,11 +68,7 @@ public class ServerControl {
                         getUsername().equals(user.getUsername())) {
                     ClientNoticeInterface client = this.listRMIClients.get(this.onlineAccounts.get(i).
                             getUsername());
-                    try {
-                        client.notifyOnOff(user.getUsername(), true);
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    client.notifyOnOff(user.getUsername(), true);
                 }
             }
         }

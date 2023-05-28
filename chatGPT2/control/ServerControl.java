@@ -62,11 +62,9 @@ public class ServerControl {
 
     public void addRMIClientInterface(UserModel user) {
         try {
-            RMIClientInterface client
-                    = (RMIClientInterface) Naming.lookup("rmi://localhost:"
-                            + user.getPort() + "/" + user.getUsername());
-            this.listRMIClients.put(user.getUsername(), client);
-            System.out.println(this.listRMIClients.size());
+            RMIClientInterface client = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
+            listRMIClients.put(user.getUsername(), client);
+            System.out.println("rmiclient size " + listRMIClients.size());
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -119,7 +117,7 @@ class ClientHandler implements Runnable {
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
     private ArrayList<UserModel> listAllAccounts = user.loadUserData();
     private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
-    ;
+    private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
     List<MessageModel> listMessage;
     RMIServerInterface serverRMI;
 
@@ -172,8 +170,8 @@ class ClientHandler implements Runnable {
                 if (!login && obj instanceof UserModel) {
                     user = (UserModel) obj;
                     if (checkLogin(user)) {
+                        addOnlineUser(user);
                         objOutput.writeObject(user);
-//                        addOnlineUser(user);
                     } else {
                         objOutput.writeObject(null);
                     }
@@ -212,6 +210,20 @@ class ClientHandler implements Runnable {
         }
     }
 
+    private void addOnlineUser(UserModel user) throws RemoteException {
+        if (!checkAlreadyLogin(user)) {
+            onlineAccounts.add(user);
+            for (UserModel onlineUser : onlineAccounts) {
+                String username = onlineUser.getUsername();
+                // thông báo cho mọi người khác về tôi
+                if (!username.equals(user.getUsername())) {
+                    RMIClientInterface client = listRMIClients.get(username);
+                    client.notifyOnOff(user.getUsername(), true);
+                }
+            }
+        }
+    }
+
     public boolean checkLogin(UserModel user) {
         // neu user da dang nhap roi thi khong cho dang nhap lan nua
         if (checkAlreadyLogin(user)) {
@@ -235,4 +247,5 @@ class ClientHandler implements Runnable {
         }
         return false;
     }
+
 }
