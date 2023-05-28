@@ -23,7 +23,7 @@ public class MultiThreadServer {
                 System.out.println("New client connected");
 
                 // Tạo một luồng xử lý riêng cho mỗi client bằng Thread Runnable
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                MTSClientHandler clientHandler = new MTSClientHandler(clientSocket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
             }
@@ -33,11 +33,11 @@ public class MultiThreadServer {
     }
 }
 
-class ClientHandler implements Runnable { // allows instances of it to be executed by a thread
+class MTSClientHandler implements Runnable { // allows instances of it to be executed by a thread
 
     private Socket clientSock; // Socket object representing the client connection
 
-    public ClientHandler(Socket clientSocket) {
+    public MTSClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
     }
 

@@ -28,28 +28,33 @@ public class ClientControl {
     // import global variables
     private String serverName = "localhost";
     private int serverPort = 1234;
+    private String rmiField = "serverRMI";
+    private int rmiPort = 1099;
     private Socket connection;
-    OutputStream outToServer;
-    ObjectOutputStream objOutput;
-    InputStream inFromServer;
-    ObjectInputStream objInput;
+    private OutputStream outToServer;
+    private ObjectOutputStream objOutput;
+    private InputStream inFromServer;
+    private ObjectInputStream objInput;
     // import objects
     private ChatView chatView;
     private LoginView loginView;
     private UserModel user = new UserModel();
     private MessageModel messageModel = new MessageModel();
-    List<MessageModel> messageList;
+    private List<MessageModel> messageList;
+    private RMIServerInterface serverRMI;
 
-    public ClientControl(String serverName, int serverPort) {
+    public ClientControl(String serverName, int serverPort, String rmiField, int rmiPort) {
         this.serverName = serverName;
         this.serverPort = serverPort;
+        this.rmiField = rmiField;
+        this.rmiPort = rmiPort;
     }
 
     public void setupRMI(String username, int port) {
         try {
             Registry registry = LocateRegistry.createRegistry(port);
             registry.rebind(username, new RMIClientImpl());
-            System.out.println("Client tao Registry thanh cong");
+            System.out.println("Dang ky thanh cong Client RMI");
         } catch (RemoteException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -73,7 +78,6 @@ public class ClientControl {
                     // nhận kết quả từ server
                     Object obj = objInput.readObject();
                     if (obj instanceof UserModel) {
-                        System.out.println("login ok");
                         user = (UserModel) obj;
                         // tạo RMI cho client
                         setupRMI(user.getUsername(), user.getPort());
@@ -84,7 +88,6 @@ public class ClientControl {
                         // Đóng view
                         loginView.dispose();
                     } else {
-                        System.out.println("login false");
                         // Xử lý logic khi đăng nhập không thành công
                         JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -94,8 +97,8 @@ public class ClientControl {
                     // Đổi trạng thái
                     user.setOnline(true);
                     // kết nối tới RMI
-                    RMIServerInterface serverRMI
-                            = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/serverRMI");
+                    serverRMI
+                            = (RMIServerInterface) Naming.lookup("rmi://" + serverName + ":" + rmiPort + "/" + rmiField);
                     serverRMI.updateRMIClient(user);
                     ArrayList<UserModel> allOtherUsers = serverRMI.getAllOnlineUsers();
                     if (!allOtherUsers.isEmpty()) {
@@ -117,11 +120,7 @@ public class ClientControl {
                             messageList = (List<MessageModel>) obj;
                             System.out.println(messageList.size());
                             updateMessage(messageList);
-                        } else {
-                            System.out.println("Received object is not a List of MessageModel");
                         }
-                    } else {
-                        System.out.println("Received object is not a List");
                     }
                 }
 
@@ -181,24 +180,16 @@ public class ClientControl {
             // Gửi thông tin tin nhắn cho server
             objOutput.writeObject(messageModel);
             objOutput.flush();
-//            String senderName = messageModel.getName();
-//            String sentTime = messageModel.getTime();
-//            String message = messageModel.getMessage();
-//            // Cập nhật tin nhắn mới trong JTextArea
-//            String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
-//            chatView.jTextArea.append(newMessage);
-//            // Cuộn xuống cuối tin nhắn mới
-//            chatView.jTextArea.setCaretPosition(chatView.jTextArea.getDocument().getLength());
         } catch (IOException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void updateMessage(List<MessageModel> messageList) {
-        for (MessageModel messageModel : messageList) {
-            String senderName = messageModel.getName();
-            String sentTime = messageModel.getTime();
-            String message = messageModel.getMessage();
+        for (MessageModel m : messageList) {
+            String senderName = m.getName();
+            String sentTime = m.getTime();
+            String message = m.getMessage();
             String newMessage = "[" + senderName + "] (" + sentTime + "): " + message + "\n";
             if (!chatView.jTextArea.getText().contains(newMessage)) {
                 // Cập nhật tin nhắn mới trong JTextArea

@@ -35,9 +35,11 @@ public class ServerControl {
     private MessageControl messageControl;
     private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
 
-    public ServerControl(int serverPort, int totalClients) {
+    public ServerControl(int serverPort, int totalClients, String rmiField, int rmiPort) {
         this.serverPort = serverPort;
         this.totalClients = totalClients;
+        this.rmiField = rmiField;
+        this.rmiPort = rmiPort;
     }
 
     private void setupFile() {
@@ -54,7 +56,7 @@ public class ServerControl {
             serverRMI.updateServerControl(this);
             Registry registry = LocateRegistry.createRegistry(rmiPort);
             registry.bind(rmiField, serverRMI);
-            System.out.println("Dang ky thanh cong serverRMI");
+            System.out.println("Dang ky thanh cong Server RMI");
         } catch (RemoteException | AlreadyBoundException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -97,19 +99,22 @@ class ClientHandler implements Runnable {
     private Socket clientSock;
     private static ArrayList<ClientHandler> instances = new ArrayList<>();
     // import global variables
-    OutputStream outToClient;
-    ObjectOutputStream objOutput;
-    InputStream inFromClient;
-    ObjectInputStream objInput;
-    boolean login = false;
+    private OutputStream outToClient;
+    private ObjectOutputStream objOutput;
+    private InputStream inFromClient;
+    private ObjectInputStream objInput;
+    private boolean login = false;
+    private String serverName = "localhost";
+    private String rmiField = "serverRMI";
+    private int rmiPort = 1099;
     // import object
     private UserModel user = new UserModel();
-    MessageControl messageControl = new MessageControl("./src/message_logs.log");
+    private MessageControl messageControl = new MessageControl("./src/message_logs.log");
     private ArrayList<UserModel> listAllAccounts = user.loadUserData();
     private ArrayList<UserModel> onlineUsers = new ArrayList<>();
     private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
-    List<MessageModel> listMessage;
-    RMIServerInterface serverRMI;
+    private List<MessageModel> listMessage;
+    private RMIServerInterface serverRMI;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
@@ -138,7 +143,7 @@ class ClientHandler implements Runnable {
 
     private void connectRMI() {
         try {
-            serverRMI = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/serverRMI");
+            serverRMI = (RMIServerInterface) Naming.lookup("rmi://" + serverName + ":" + rmiPort + "/" + rmiField);
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -203,15 +208,13 @@ class ClientHandler implements Runnable {
     private void addOnlineUser(UserModel user) throws RemoteException {
         onlineUsers = serverRMI.getAllOnlineUsers();
         listRMIClients = serverRMI.getListRMIClients();
-        System.out.println("onlineUsers size: " + onlineUsers.size());
-        System.out.println("listRMIClients size: " + listRMIClients.size());
 
         for (UserModel onlineUser : onlineUsers) {
             String username = onlineUser.getUsername();
 //            // thông báo cho mọi người khác về tôi
 //            if (!username.equals(user.getUsername())) {
-                RMIClientInterface clientRMI = listRMIClients.get(username);
-                clientRMI.notifyOnOff(user.getUsername(), true);
+            RMIClientInterface clientRMI = listRMIClients.get(username);
+            clientRMI.notifyOnOff(user.getUsername(), true);
 //            }
         }
     }

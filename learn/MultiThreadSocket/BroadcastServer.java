@@ -29,7 +29,7 @@ public class BroadcastServer implements Runnable {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected");
 
-                Thread t = new Thread(new ClientHandler(clientSocket));
+                Thread t = new Thread(new MTSClientHandler(clientSocket));
                 t.start();
             }
         } catch (IOException ex) {
@@ -43,28 +43,28 @@ public class BroadcastServer implements Runnable {
     }
 }
 
-class ClientHandler implements Runnable {
+class BSClientHandler implements Runnable {
 
     private Socket clientSock;
-    private static ArrayList<ClientHandler> instances = new ArrayList<>();
+    private static ArrayList<BSClientHandler> instances = new ArrayList<>();
 
     InputStream inFromClient;
     DataInputStream in;
     OutputStream outToClient;
     DataOutputStream out;
 
-    public ClientHandler(Socket clientSocket) {
+    public BSClientHandler(Socket clientSocket) {
         clientSock = clientSocket;
         //add this to the arraylist, one instance/thread for every connection.
         addInstance();
     }
 
     private synchronized void addInstance() {
-        ClientHandler.instances.add(this);
+        BSClientHandler.instances.add(this);
     }
 
     private synchronized void removeInstance() {
-        ClientHandler.instances.remove(this);
+        BSClientHandler.instances.remove(this);
     }
 
     public DataOutputStream getDataOutputStream() {
@@ -72,7 +72,7 @@ class ClientHandler implements Runnable {
     }
 
     private synchronized void broadcastMessage(String message) throws IOException {
-        for (ClientHandler client : instances) {
+        for (BSClientHandler client : instances) {
             DataOutputStream out = client.getDataOutputStream();
             out.writeUTF(message);
         }
@@ -92,7 +92,7 @@ class ClientHandler implements Runnable {
             out.writeUTF("[Server] Thank you for connecting to " + clientSock.getLocalSocketAddress());
             broadcastMessage("[Broadcast] There are " + instances.size() + " total clients!");
         } catch (IOException ex) {
-            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BSClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
