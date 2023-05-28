@@ -21,8 +21,8 @@ public class ServerControl {
 
     private ArrayList<User> listActiveAccounts;
     private ArrayList<User> availableAccounts;
-    public AvailableUsersInterface availUsers;
-    private HashMap<String, ClientNotificationInterface> listRMIClients;
+    public AvailableUsersInterface serverRMI;
+    private HashMap<String, ClientNoticeInterface> listRMIClients;
 
     private int serverPort;
     private ServerSocket myServer;
@@ -36,11 +36,11 @@ public class ServerControl {
         listRMIClients = new HashMap<>();
         listActiveAccounts = ServerDBControl.getAllUsers();
         try {
-            availUsers = new AvailableUserImpl(availableAccounts);
-            availUsers.updateServerControl(this);
+            serverRMI = new AvailableUserImpl(availableAccounts);
+            serverRMI.updateServerControl(this);
             Registry registry = LocateRegistry.createRegistry(789);
-            registry.bind("availUsers", availUsers);
-            System.out.println("Dang ky thanh cong availUsers");
+            registry.bind("serverRMI", serverRMI);
+            System.out.println("Dang ky thanh cong serverRMI");
             //openServer(6868);
         } catch (RemoteException | AlreadyBoundException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
@@ -73,7 +73,7 @@ public class ServerControl {
             for (int i = 0; i < this.availableAccounts.size(); i++) {
                 if (!this.availableAccounts.get(i).
                         getUsername().equals(user.getUsername())) {
-                    ClientNotificationInterface client = this.listRMIClients.get(this.availableAccounts.get(i).
+                    ClientNoticeInterface client = this.listRMIClients.get(this.availableAccounts.get(i).
                             getUsername());
                     try {
                         client.notifyOnOff(user.getUsername(), true);
@@ -87,8 +87,8 @@ public class ServerControl {
 
     public void addRMIClientInterface(User user) {
         try {
-            ClientNotificationInterface client
-                    = (ClientNotificationInterface) Naming.lookup("rmi://localhost:"
+            ClientNoticeInterface client
+                    = (ClientNoticeInterface) Naming.lookup("rmi://localhost:"
                             + user.getPort() + "/" + user.getUsername());
             this.listRMIClients.put(user.getUsername(), client);
             System.out.println(this.listRMIClients.size());

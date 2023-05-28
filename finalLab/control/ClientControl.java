@@ -35,7 +35,7 @@ public class ClientControl {
         public void registry(String username, int port) {
             try {
                 Registry registry = LocateRegistry.createRegistry(port);
-                registry.rebind(username, new ClientNotificationImpl());
+                registry.rebind(username, new ClientNoticeImpl());
                 System.out.println("Client lien lac voi Registry thanh cong");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -65,9 +65,9 @@ public class ClientControl {
                         System.out.println("User " + model.getUsername() + " logins sucessfully");
                         registry(model.getUsername(), model.getPort());
                         
-                        AvailableUsersInterface availUsers
-                                = (AvailableUsersInterface) Naming.lookup("rmi://localhost:789/availUsers");
-                        ArrayList<String> allOtherUsers = availUsers.getAllAvailableUsers();
+                        AvailableUsersInterface serverRMI
+                                = (AvailableUsersInterface) Naming.lookup("rmi://localhost:789/serverRMI");
+                        ArrayList<String> allOtherUsers = serverRMI.getAllAvailableUsers();
                         if (allOtherUsers != null && !allOtherUsers.isEmpty()) {
                             for (String name : allOtherUsers) {
                                 if (!name.equals(model.getUsername())) {
@@ -77,7 +77,7 @@ public class ClientControl {
                         } else {
                             System.out.println("\t No one in the room!");
                         }
-                        availUsers.updateRMIClient(model);
+                        serverRMI.updateRMIClient(model);
                     } else {
                         control.view.showMessage(false, "Invalid username and/or password!");
                     }

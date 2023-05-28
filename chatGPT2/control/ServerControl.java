@@ -17,6 +17,7 @@ import java.util.List;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +31,8 @@ public class ServerControl {
     private ServerSocket serverSocket;
     private Socket connection;
     // import objects
-    MessageControl messageControl;
+    private MessageControl messageControl;
+    private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();;
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -47,14 +49,27 @@ public class ServerControl {
 
     private void setupRMI() {
         try {
-            ServerInterface serverRMI = new ServerImpl();
+            RMIServerInterface serverRMI = new RMIServerImpl();
             Registry registry = LocateRegistry.createRegistry(rmiPort);
             registry.bind(rmiField, serverRMI);
+            System.out.println("Dang ky thanh cong serverRMI");
         } catch (RemoteException | AlreadyBoundException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void addRMIClientInterface(UserModel user) {
+        try {
+            RMIClientInterface client
+                    = (RMIClientInterface) Naming.lookup("rmi://localhost:"
+                            + user.getPort() + "/" + user.getUsername());
+            this.listRMIClients.put(user.getUsername(), client);
+            System.out.println(this.listRMIClients.size());
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void listening() {
         try {
             // setup anything
@@ -100,7 +115,7 @@ class ClientHandler implements Runnable {
     // import object
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
     List<MessageModel> listMessage;
-    ServerInterface serverRMI;
+    RMIServerInterface serverRMI;
 
     public ClientHandler(Socket clientSocket) {
         this.clientSock = clientSocket;
@@ -129,7 +144,7 @@ class ClientHandler implements Runnable {
 
     private void connectRMI() {
         try {
-            serverRMI = (ServerInterface) Naming.lookup("rmi://localhost:1099/server");
+            serverRMI = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/server");
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -151,7 +166,6 @@ class ClientHandler implements Runnable {
                 if (!login && obj instanceof UserModel) {
                     UserModel user = (UserModel) obj;
                     System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
-                    serverRMI.addOnlineUser(user);
                     login = true;
                 }
                 if (obj instanceof MessageModel) {
