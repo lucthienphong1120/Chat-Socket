@@ -9,7 +9,7 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
 
     private static final long serialVersionUID = -6018722832052878923L;
 
-    private ArrayList<UserModel> availableUsers;
+    private ArrayList<UserModel> onlineUsers;
     private ServerControl control;
 
     public RMIServerImpl() throws RemoteException {
@@ -17,13 +17,13 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
     }
 
     public RMIServerImpl(ArrayList<UserModel> availableUsers) throws RemoteException {
-        this.setAvailableUsers(availableUsers);
+        this.setOnlineUsers(availableUsers);
     }
 
     @Override
-    public ArrayList<String> getAllAvailableUsers() throws RemoteException {
+    public ArrayList<String> getAllOnlineUsers() throws RemoteException {
         ArrayList<String> allAvailUsers = new ArrayList<String>();
-        for (UserModel u : availableUsers) {
+        for (UserModel u : onlineUsers) {
             if (!allAvailUsers.contains(u.getUsername())) {
                 allAvailUsers.add(u.getUsername());
             }
@@ -31,8 +31,8 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
         return allAvailUsers;
     }
 
-    private void setAvailableUsers(ArrayList<UserModel> availableUsers) {
-        this.availableUsers = availableUsers;
+    private void setOnlineUsers(ArrayList<UserModel> availableUsers) {
+        this.onlineUsers = availableUsers;
     }
 
     @Override

@@ -5,9 +5,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import finalLab.control.ServerControl;
 
-public interface AvailableUsersInterface extends Remote {
+public interface OnlineUsersInterface extends Remote {
 
-    public ArrayList<String> getAllAvailableUsers() throws RemoteException;
+    public ArrayList<String> getAllOnlineUsers() throws RemoteException;
 
     public void updateRMIClient(User user) throws RemoteException;
 

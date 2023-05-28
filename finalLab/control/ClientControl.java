@@ -65,13 +65,13 @@ public class ClientControl {
                         System.out.println("User " + model.getUsername() + " logins sucessfully");
                         registry(model.getUsername(), model.getPort());
                         
-                        AvailableUsersInterface serverRMI
-                                = (AvailableUsersInterface) Naming.lookup("rmi://localhost:789/serverRMI");
-                        ArrayList<String> allOtherUsers = serverRMI.getAllAvailableUsers();
+                        OnlineUsersInterface serverRMI
+                                = (OnlineUsersInterface) Naming.lookup("rmi://localhost:789/serverRMI");
+                        ArrayList<String> allOtherUsers = serverRMI.getAllOnlineUsers();
                         if (allOtherUsers != null && !allOtherUsers.isEmpty()) {
                             for (String name : allOtherUsers) {
                                 if (!name.equals(model.getUsername())) {
-                                    System.out.println("\t Available user " + name);
+                                    System.out.println("\t Online user " + name);
                                 }
                             }
                         } else {

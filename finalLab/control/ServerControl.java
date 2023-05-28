@@ -19,9 +19,9 @@ import java.util.HashMap;
 
 public class ServerControl {
 
-    private ArrayList<User> listActiveAccounts;
-    private ArrayList<User> availableAccounts;
-    public AvailableUsersInterface serverRMI;
+    private ArrayList<User> listAllAccounts;
+    private ArrayList<User> onlineAccounts;
+    public OnlineUsersInterface serverRMI;
     private HashMap<String, ClientNoticeInterface> listRMIClients;
 
     private int serverPort;
@@ -31,12 +31,12 @@ public class ServerControl {
 
     public ServerControl(ServerView view) {
         this.view = view;
-        listActiveAccounts = new ArrayList<>();
-        availableAccounts = new ArrayList<>();
+        listAllAccounts = new ArrayList<>();
+        onlineAccounts = new ArrayList<>();
         listRMIClients = new HashMap<>();
-        listActiveAccounts = ServerDBControl.getAllUsers();
+        listAllAccounts = ServerDBControl.getAllUsers();
         try {
-            serverRMI = new AvailableUserImpl(availableAccounts);
+            serverRMI = new OnlineUserImpl(onlineAccounts);
             serverRMI.updateServerControl(this);
             Registry registry = LocateRegistry.createRegistry(789);
             registry.bind("serverRMI", serverRMI);
@@ -49,7 +49,7 @@ public class ServerControl {
 
     private int checkAlreadyLogin(User user) {
         int index = 0;
-        for (User u : this.availableAccounts) {
+        for (User u : this.onlineAccounts) {
             if (u.equals(user)) {
                 return index;
             }
@@ -58,22 +58,22 @@ public class ServerControl {
         return -1;
     }
 
-    private void addAvailableUser(User user) {
+    private void addOnlineUser(User user) {
         int index = this.checkAlreadyLogin(user);
         if (index == -1) {
-            this.availableAccounts.add(user);
+            this.onlineAccounts.add(user);
             //Cap nhat status trong listActiveAccounts            
-            for (int i = 0; i < listActiveAccounts.size(); i++) {
-                if (listActiveAccounts.get(i).equals(user)) {
+            for (int i = 0; i < listAllAccounts.size(); i++) {
+                if (listAllAccounts.get(i).equals(user)) {
                     user.setStatus("on");
-                    listActiveAccounts.set(i, user);
+                    listAllAccounts.set(i, user);
                     break;
                 }
             }
-            for (int i = 0; i < this.availableAccounts.size(); i++) {
-                if (!this.availableAccounts.get(i).
+            for (int i = 0; i < this.onlineAccounts.size(); i++) {
+                if (!this.onlineAccounts.get(i).
                         getUsername().equals(user.getUsername())) {
-                    ClientNoticeInterface client = this.listRMIClients.get(this.availableAccounts.get(i).
+                    ClientNoticeInterface client = this.listRMIClients.get(this.onlineAccounts.get(i).
                             getUsername());
                     try {
                         client.notifyOnOff(user.getUsername(), true);
@@ -117,7 +117,7 @@ public class ServerControl {
                 if (this.checkLogin(user)) {
                     user.setStatus("on");
                     this.view.showMessage("New Client Connected");
-                    this.addAvailableUser(user);
+                    this.addOnlineUser(user);
                     writer.print("Success");
                 } else {
                     this.view.showMessage("Failed");
@@ -140,7 +140,7 @@ public class ServerControl {
         {
             return false;
         }
-        for (User u : listActiveAccounts) {
+        for (User u : listAllAccounts) {
             if (u.equals(user)) {
                 return true;
             }

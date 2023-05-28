@@ -5,25 +5,25 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import finalLab.control.ServerControl;
 
-public class AvailableUserImpl extends UnicastRemoteObject implements AvailableUsersInterface {
+public class OnlineUserImpl extends UnicastRemoteObject implements OnlineUsersInterface {
 
-    private ArrayList<User> availableUsers;
+    private ArrayList<User> onlineUsers;
     private ServerControl control;
 
     private static final long serialVersionUID = -6018722832052878923L;
 
-    public AvailableUserImpl() throws RemoteException {
+    public OnlineUserImpl() throws RemoteException {
         // TODO Auto-generated constructor stub
     }
 
-    public AvailableUserImpl(ArrayList<User> availableUsers) throws RemoteException {
-        this.setAvailableUsers(availableUsers);
+    public OnlineUserImpl(ArrayList<User> availableUsers) throws RemoteException {
+        this.setOnlineUsers(availableUsers);
     }
 
     @Override
-    public ArrayList<String> getAllAvailableUsers() throws RemoteException {
+    public ArrayList<String> getAllOnlineUsers() throws RemoteException {
         ArrayList<String> allAvailUsers = new ArrayList<String>();
-        for (User u : availableUsers) {
+        for (User u : onlineUsers) {
             if (!allAvailUsers.contains(u.getUsername())) {
                 allAvailUsers.add(u.getUsername());
             }
@@ -31,8 +31,8 @@ public class AvailableUserImpl extends UnicastRemoteObject implements AvailableU
         return allAvailUsers;
     }
 
-    private void setAvailableUsers(ArrayList<User> availableUsers) {
-        this.availableUsers = availableUsers;
+    private void setOnlineUsers(ArrayList<User> availableUsers) {
+        this.onlineUsers = availableUsers;
     }
 
     @Override

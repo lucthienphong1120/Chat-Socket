@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public interface RMIServerInterface extends Remote {
 
-    public ArrayList<String> getAllAvailableUsers() throws RemoteException;
+    public ArrayList<String> getAllOnlineUsers() throws RemoteException;
 
     public void updateRMIClient(UserModel user) throws RemoteException;
 
