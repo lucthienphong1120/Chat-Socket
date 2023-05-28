@@ -34,7 +34,6 @@ public class ServerControl {
     public RMIServerInterface serverRMI;
     private MessageControl messageControl;
     private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
-    private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -57,16 +56,6 @@ public class ServerControl {
             registry.bind(rmiField, serverRMI);
             System.out.println("Dang ky thanh cong serverRMI");
         } catch (RemoteException | AlreadyBoundException ex) {
-            Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void addRMIClientInterface(UserModel user) {
-        try {
-            RMIClientInterface client = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
-            listRMIClients.put(user.getUsername(), client);
-            System.out.println("rmi client size: " + listRMIClients.size());
-        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -117,7 +106,7 @@ class ClientHandler implements Runnable {
     private UserModel user = new UserModel();
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
     private ArrayList<UserModel> listAllAccounts = user.loadUserData();
-    private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
+    private ArrayList<UserModel> onlineUsers = new ArrayList<>();
     private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
     List<MessageModel> listMessage;
     RMIServerInterface serverRMI;
@@ -212,16 +201,18 @@ class ClientHandler implements Runnable {
     }
 
     private void addOnlineUser(UserModel user) throws RemoteException {
-        if (!checkAlreadyLogin(user)) {
-            onlineAccounts.add(user);
-            for (UserModel onlineUser : onlineAccounts) {
-                String username = onlineUser.getUsername();
-                // thông báo cho mọi người khác về tôi
-                if (!username.equals(user.getUsername())) {
-                    RMIClientInterface client = listRMIClients.get(username);
-                    client.notifyOnOff(user.getUsername(), true);
-                }
-            }
+        onlineUsers = serverRMI.getAllOnlineUsers();
+        listRMIClients = serverRMI.getListRMIClients();
+        System.out.println("onlineUsers size: " + onlineUsers.size());
+        System.out.println("listRMIClients size: " + listRMIClients.size());
+
+        for (UserModel onlineUser : onlineUsers) {
+            String username = onlineUser.getUsername();
+//            // thông báo cho mọi người khác về tôi
+//            if (!username.equals(user.getUsername())) {
+                RMIClientInterface clientRMI = listRMIClients.get(username);
+                clientRMI.notifyOnOff(user.getUsername(), true);
+//            }
         }
     }
 
@@ -241,7 +232,7 @@ class ClientHandler implements Runnable {
     }
 
     private boolean checkAlreadyLogin(UserModel user) {
-        for (UserModel onlineUser : onlineAccounts) {
+        for (UserModel onlineUser : onlineUsers) {
             if (onlineUser.equals(user)) {
                 return true;
             }

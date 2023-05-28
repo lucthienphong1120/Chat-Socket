@@ -13,7 +13,7 @@ public class RMIClientImpl extends UnicastRemoteObject implements RMIClientInter
 
     @Override
     public void notifyOnOff(String username, boolean online) throws RemoteException {
-        System.out.println("[i]" + username + " is " + (online ? "on" : "off"));
+        System.out.println("[i] User " + username + " is " + (online ? "on" : "off"));
     }
 
 }

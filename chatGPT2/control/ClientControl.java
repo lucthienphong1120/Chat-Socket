@@ -97,11 +97,11 @@ public class ClientControl {
                     RMIServerInterface serverRMI
                             = (RMIServerInterface) Naming.lookup("rmi://localhost:1099/serverRMI");
                     serverRMI.updateRMIClient(user);
-                    ArrayList<String> allOtherUsers = serverRMI.getAllOnlineUsers();
+                    ArrayList<UserModel> allOtherUsers = serverRMI.getAllOnlineUsers();
                     if (!allOtherUsers.isEmpty()) {
-                        for (String name : allOtherUsers) {
-                            if (!name.equals(user.getUsername())) {
-                                System.out.println("[i] Online user " + name);
+                        for (UserModel otherUser : allOtherUsers) {
+                            if (!otherUser.getUsername().equals(user.getUsername())) {
+                                System.out.println("[i] Online user " + otherUser.getUsername());
                             }
                         }
                     } else {
