@@ -17,7 +17,6 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
 
     private ArrayList<UserModel> onlineUsers;
     private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
-    private ServerControl control;
 
     public RMIServerImpl() throws RemoteException {
         // TODO Auto-generated constructor stub
@@ -41,16 +40,11 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
     public void updateRMIClient(UserModel user) throws RemoteException {
         this.onlineUsers.add(user);
         try {
-            RMIClientInterface client = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
-            listRMIClients.put(user.getUsername(), client);
+            RMIClientInterface clientRMI = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
+            listRMIClients.put(user.getUsername(), clientRMI);
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @Override
-    public void updateServerControl(ServerControl control) throws RemoteException {
-        this.control = control;
     }
 
 }

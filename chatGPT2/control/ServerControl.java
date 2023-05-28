@@ -33,7 +33,7 @@ public class ServerControl {
     // import objects
     public RMIServerInterface serverRMI;
     private MessageControl messageControl;
-    private ArrayList<UserModel> onlineAccounts = new ArrayList<>();
+    private ArrayList<UserModel> onlineUsers = new ArrayList<>();
 
     public ServerControl(int serverPort, int totalClients, String rmiField, int rmiPort) {
         this.serverPort = serverPort;
@@ -52,8 +52,7 @@ public class ServerControl {
 
     private void setupRMI() {
         try {
-            serverRMI = new RMIServerImpl(onlineAccounts);
-            serverRMI.updateServerControl(this);
+            serverRMI = new RMIServerImpl(onlineUsers);
             Registry registry = LocateRegistry.createRegistry(rmiPort);
             registry.bind(rmiField, serverRMI);
             System.out.println("Dang ky thanh cong Server RMI");
@@ -224,10 +223,12 @@ class ClientHandler implements Runnable {
         if (checkAlreadyLogin(user)) {
             return false;
         }
-        for (UserModel availableUser : listAllAccounts) {
-            if (user.getUsername().equals(availableUser.getUsername())
-                    && user.getPassword().equals(availableUser.getPassword())) {
-                user.setName(availableUser.getName());
+        for (UserModel account : listAllAccounts) {
+            if (user.getUsername().equals(account.getUsername())
+                    && user.getPassword().equals(account.getPassword())) {
+                // thiết lập thông tin cho user
+                user.setName(account.getName());
+                user.setImg(account.getImg());
                 return true;
             }
         }

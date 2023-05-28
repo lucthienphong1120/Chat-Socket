@@ -40,6 +40,7 @@ public class ClientControl {
     private LoginView loginView;
     private UserModel user = new UserModel();
     private MessageModel messageModel = new MessageModel();
+    private ArrayList<UserModel> onlineUsers = new ArrayList<>();
     private List<MessageModel> messageList;
     private RMIServerInterface serverRMI;
 
@@ -75,7 +76,7 @@ public class ClientControl {
             }
             while (connection.isConnected()) {
                 if (!user.isLoggin() && !user.isOnline()) {
-                    // nhận kết quả từ server
+                    // nhận kết quả đăng nhập từ server
                     Object obj = objInput.readObject();
                     if (obj instanceof UserModel) {
                         user = (UserModel) obj;
@@ -97,19 +98,8 @@ public class ClientControl {
                     // Đổi trạng thái
                     user.setOnline(true);
                     // kết nối tới RMI
-                    serverRMI
-                            = (RMIServerInterface) Naming.lookup("rmi://" + serverName + ":" + rmiPort + "/" + rmiField);
+                    serverRMI = (RMIServerInterface) Naming.lookup("rmi://" + serverName + ":" + rmiPort + "/" + rmiField);
                     serverRMI.updateRMIClient(user);
-                    ArrayList<UserModel> allOtherUsers = serverRMI.getAllOnlineUsers();
-                    if (!allOtherUsers.isEmpty()) {
-                        for (UserModel otherUser : allOtherUsers) {
-                            if (!otherUser.getUsername().equals(user.getUsername())) {
-                                System.out.println("[i] Online user " + otherUser.getUsername());
-                            }
-                        }
-                    } else {
-                        System.out.println("[i] No one in the room!");
-                    }
                 }
                 if (user.isLoggin() && user.isOnline()) {
                     // get data from server
@@ -122,6 +112,8 @@ public class ClientControl {
                             updateMessage(messageList);
                         }
                     }
+                    onlineUsers = serverRMI.getAllOnlineUsers();
+                    updateOnlineList(onlineUsers);
                 }
 
                 Thread.sleep(500);
@@ -196,6 +188,17 @@ public class ClientControl {
                 chatView.jTextArea.append(newMessage);
                 // Cuộn xuống cuối tin nhắn mới
                 chatView.jTextArea.setCaretPosition(chatView.jTextArea.getDocument().getLength());
+            }
+        }
+    }
+
+    private void updateOnlineList(ArrayList<UserModel> onlineUsers) {
+        if (!onlineUsers.isEmpty()) {
+            chatView.resetUserList();
+            for (UserModel online : onlineUsers) {
+                System.out.println(online.getImg());
+                System.out.println("[i] Online user " + online.getUsername());
+                chatView.addUserList(online.getName(), online.getImg());
             }
         }
     }

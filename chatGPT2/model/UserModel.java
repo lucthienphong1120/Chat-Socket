@@ -75,6 +75,10 @@ public class UserModel implements Serializable {
         this.img = new ImageIcon("./src/chatGPT2/img/" + imgPath);
     }
 
+    public void setImg(Icon img) {
+        this.img = img;
+    }
+
     public int getPort() {
         return port;
     }

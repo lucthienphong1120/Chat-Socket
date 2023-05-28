@@ -1,13 +1,11 @@
 package chatGPT2.view;
 
+import javax.swing.Icon;
+
 public class ChatView extends javax.swing.JFrame {
 
     public ChatView() {
         initComponents();
-        UserItem item = new UserItem();
-        jUserList.add(item);
-        jUserList.validate();
-        jUserList.repaint();
     }
 
     @SuppressWarnings("unchecked")
@@ -30,7 +28,7 @@ public class ChatView extends javax.swing.JFrame {
         Title.setText("Your name");
         Title.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Chat App", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP));
 
-        jChatPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jChatPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
 
         jSend.setText("SEND");
         jSend.addActionListener(new java.awt.event.ActionListener() {
@@ -69,7 +67,7 @@ public class ChatView extends javax.swing.JFrame {
         jTextArea.setEditable(false);
         jTextArea.setColumns(20);
         jTextArea.setRows(5);
-        jTextArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jTextArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
         jTextArea.setFocusable(false);
         jScrollPane1.setViewportView(jTextArea);
 
@@ -121,6 +119,19 @@ public class ChatView extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jSendActionPerformed
 
+    public void resetUserList() {
+        jUserList.removeAll();
+        jUserList.validate();
+        jUserList.repaint();
+    }
+    
+    public void addUserList(String name, Icon image) {
+        UserItem item = new UserItem(name, image);
+        jUserList.add(item);
+        jUserList.validate();
+        jUserList.repaint();
+    }
+    
     /**
      * @param args the command line arguments
      */
