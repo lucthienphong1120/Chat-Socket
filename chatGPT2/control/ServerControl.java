@@ -32,7 +32,9 @@ public class ServerControl {
     private Socket connection;
     // import objects
     private MessageControl messageControl;
-    private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();;
+    private HashMap<String, RMIClientInterface> listRMIClients = new HashMap<>();
+
+    ;
 
     public ServerControl(int serverPort, int totalClients) {
         this.serverPort = serverPort;
@@ -69,7 +71,7 @@ public class ServerControl {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void listening() {
         try {
             // setup anything
@@ -113,7 +115,10 @@ class ClientHandler implements Runnable {
     ObjectInputStream objInput;
     boolean login = false;
     // import object
+    private UserModel user = new UserModel();
     MessageControl messageControl = new MessageControl("./src/message_logs.log");
+    private ArrayList<UserModel> listAllAccounts = user.loadUserData();
+    private ArrayList<UserModel> onlineAccounts = new ArrayList<>();;
     List<MessageModel> listMessage;
     RMIServerInterface serverRMI;
 
@@ -166,6 +171,11 @@ class ClientHandler implements Runnable {
                 if (!login && obj instanceof UserModel) {
                     UserModel user = (UserModel) obj;
                     System.out.println(user.getName() + " " + user.getUsername() + " " + user.getPassword());
+                    if (this.checkLogin(user)) {
+                        objOutput.writeBoolean(true);
+                    } else {
+                        objOutput.writeBoolean(false);
+                    }
                     login = true;
                 }
                 if (obj instanceof MessageModel) {
@@ -197,5 +207,31 @@ class ClientHandler implements Runnable {
                 Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public boolean checkLogin(UserModel user) {
+        //neu user da dang nhap roi thi khong cho dang nhap lan nua
+        if (checkAlreadyLogin(user) != -1) {
+            return false;
+        }
+        for (UserModel availableUser : listAllAccounts) {
+            if (user.getUsername().equals(availableUser.getUsername())
+                    && user.getPassword().equals(availableUser.getPassword())) {
+                user.setName(availableUser.getName());
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private int checkAlreadyLogin(UserModel user) {
+        int index = 0;
+        for (UserModel u : onlineAccounts) {
+            if (u.equals(user)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 }

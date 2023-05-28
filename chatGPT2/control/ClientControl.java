@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 
 public class ClientControl {
 
@@ -34,13 +33,11 @@ public class ClientControl {
     private LoginView loginView;
     private UserModel user = new UserModel();
     private MessageModel messageModel = new MessageModel();
-    private ArrayList<UserModel> list;
     List<MessageModel> messageList;
 
     public ClientControl(String serverName, int serverPort) {
         this.serverName = serverName;
         this.serverPort = serverPort;
-        list = user.loadUserData();
     }
 
     public void connecting() {
@@ -103,21 +100,29 @@ public class ClientControl {
         ActionListener e = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = loginView.jUsername.getText();
-                String password = loginView.jPassword.getText();
-                user = new UserModel(username, password);
-                if (checkLogin(user)) {
-                    // Xử lý logic khi đăng nhập thành công
-                    JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    // Đổi trạng thái
-                    user.setLoggin(true);;
-                    // Đóng view
-                    loginView.dispose();
-                    // Huỷ lắng nghe sự kiện
-                    loginView.jLogin.removeActionListener(this);
-                } else {
-                    // Xử lý logic khi đăng nhập không thành công
-                    JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                try {
+                    String username = loginView.jUsername.getText();
+                    String password = loginView.jPassword.getText();
+                    user = new UserModel(username, password);
+                    // gửi thông tin đăng nhập cho server kiểm tra
+                    objOutput.writeObject(user);
+                    // nhận kết quả từ server
+                    boolean responseLogin = objInput.readBoolean();
+                    if (responseLogin) {
+                        // Xử lý logic khi đăng nhập thành công
+                        JOptionPane.showMessageDialog(loginView, "Login successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        // Đổi trạng thái
+                        user.setLoggin(true);;
+                        // Đóng view
+                        loginView.dispose();
+                        // Huỷ lắng nghe sự kiện
+                        loginView.jLogin.removeActionListener(this);
+                    } else {
+                        // Xử lý logic khi đăng nhập không thành công
+                        JOptionPane.showMessageDialog(loginView, "Incorrect username or password", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         };
@@ -142,17 +147,6 @@ public class ClientControl {
         };
         chatView.jTextMessage.addActionListener(e);
         chatView.jSend.addActionListener(e);
-    }
-
-    public boolean checkLogin(UserModel user) {
-        for (UserModel availableUser : list) {
-            if (user.getUsername().equals(availableUser.getUsername())
-                    && user.getPassword().equals(availableUser.getPassword())) {
-                user.setName(availableUser.getName());
-                return true;
-            }
-        }
-        return false;
     }
 
     public void sendMessage(MessageModel messageModel) {

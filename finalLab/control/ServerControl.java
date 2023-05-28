@@ -19,10 +19,10 @@ import java.util.HashMap;
 
 public class ServerControl {
 
-    private ArrayList<User> listAllAccounts;
-    private ArrayList<User> onlineAccounts;
+    private ArrayList<User> listAllAccounts = ServerDBControl.getAllUsers();
+    private ArrayList<User> onlineAccounts = new ArrayList<>();
     public OnlineUsersInterface serverRMI;
-    private HashMap<String, ClientNoticeInterface> listRMIClients;
+    private HashMap<String, ClientNoticeInterface> listRMIClients = new HashMap<>();
 
     private int serverPort;
     private ServerSocket myServer;
@@ -31,10 +31,6 @@ public class ServerControl {
 
     public ServerControl(ServerView view) {
         this.view = view;
-        listAllAccounts = new ArrayList<>();
-        onlineAccounts = new ArrayList<>();
-        listRMIClients = new HashMap<>();
-        listAllAccounts = ServerDBControl.getAllUsers();
         try {
             serverRMI = new OnlineUserImpl(onlineAccounts);
             serverRMI.updateServerControl(this);
