@@ -168,10 +168,10 @@ class ClientHandler implements Runnable {
                     if (checkLogin(user)) {
                         addOnlineUser(user);
                         objOutput.writeObject(user);
+                        login = true;
                     } else {
                         objOutput.writeObject(null);
                     }
-                    login = true;
                 }
                 if (login && obj instanceof MessageModel) {
                     MessageModel messageModel = (MessageModel) obj;

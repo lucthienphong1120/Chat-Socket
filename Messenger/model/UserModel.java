@@ -37,7 +37,7 @@ public class UserModel implements Serializable {
         list.add(new UserModel("Admin", "admin", "123", "user.png"));
         list.add(new UserModel("Chung", "chung", "123", "chung.jpg"));
         list.add(new UserModel("Định", "dinh", "123", "dinh.jpg"));
-        list.add(new UserModel("Kỳ Lân", "kyanh", "123", "kylan.jpg"));
+        list.add(new UserModel("Kỳ Lân", "kyanh", "123", "kyanh.jpg"));
         list.add(new UserModel("Duck", "duc", "123", "duc.jpg"));
         return list;
     }
