@@ -37,14 +37,28 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
     }
 
     @Override
-    public void updateRMIClient(UserModel user) throws RemoteException {
-        this.onlineUsers.add(user);
+    public void addRMIClient(UserModel user) throws RemoteException {
         try {
             RMIClientInterface clientRMI = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
             listRMIClients.put(user.getUsername(), clientRMI);
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    @Override
+    public void addOnlineUser(UserModel user) throws RemoteException {
+        onlineUsers.add(user);
+    }
+    
+    @Override
+    public void removeRMIClient(UserModel user) throws RemoteException {
+            listRMIClients.remove(user.getUsername());
+    }
+    
+    @Override
+    public void removeOnlineUser(UserModel user) throws RemoteException {
+        onlineUsers.remove(user);
     }
 
 }

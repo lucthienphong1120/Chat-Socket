@@ -100,7 +100,8 @@ public class ClientControl {
                     user.setOnline(true);
                     // kết nối tới RMI
                     serverRMI = (RMIServerInterface) Naming.lookup("rmi://" + serverName + ":" + rmiPort + "/" + rmiField);
-                    serverRMI.updateRMIClient(user);
+                    serverRMI.addRMIClient(user);
+                    serverRMI.addOnlineUser(user);
                 }
                 if (user.isLoggin() && user.isOnline()) {
                     onlineUsers = serverRMI.getAllOnlineUsers();
@@ -120,6 +121,9 @@ public class ClientControl {
                         }
                     }
                 }
+                if (!user.isLoggin() && user.isOnline()) {
+                    break;
+                }
 
                 Thread.sleep(500);
             }
@@ -127,6 +131,8 @@ public class ClientControl {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
+                serverRMI.removeRMIClient(user);
+                serverRMI.removeOnlineUser(user);
                 inFromServer.close();
                 outToServer.close();
                 objInput.close();
@@ -141,7 +147,7 @@ public class ClientControl {
     private void openLogin() {
         loginView = new LoginView();
         loginView.setVisible(true);
-        ActionListener e = (ActionEvent e1) -> {
+        ActionListener loginEvent = (ActionEvent e1) -> {
             try {
                 String username = loginView.jUsername.getText();
                 String password = loginView.jPassword.getText();
@@ -152,8 +158,8 @@ public class ClientControl {
                 Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
             }
         };
-        loginView.jPassword.addActionListener(e);
-        loginView.jLogin.addActionListener(e);
+        loginView.jPassword.addActionListener(loginEvent);
+        loginView.jLogin.addActionListener(loginEvent);
     }
 
     private void openChat() {
@@ -162,15 +168,24 @@ public class ClientControl {
         chatView.setTitle("Chat App: " + user.getUsername());
         chatView.Title.setText("Welcome back " + user.getName() + " !");
         user.setOnline(true);
-        ActionListener e = (ActionEvent e1) -> {
+        ActionListener chatEvent = (ActionEvent e1) -> {
             messageModel = new MessageModel(user.getName(),
                     chatView.jTextMessage.getText(),
                     new SimpleDateFormat("HH:mm:ss").format(new Date()));
             sendMessage(messageModel);
             chatView.jTextMessage.setText("");
         };
-        chatView.jTextMessage.addActionListener(e);
-        chatView.jSend.addActionListener(e);
+        ActionListener logoutEvent = (ActionEvent e1) -> {
+            messageModel = new MessageModel("Server",
+                    user.getName() + " has logout!",
+                    new SimpleDateFormat("HH:mm:ss").format(new Date()));
+            sendMessage(messageModel);
+            user.setLoggin(false);
+            chatView.dispose();
+        };
+        chatView.jTextMessage.addActionListener(chatEvent);
+        chatView.jSend.addActionListener(chatEvent);
+        chatView.jLogout.addActionListener(logoutEvent);
     }
 
     public void sendMessage(MessageModel messageModel) {
@@ -192,9 +207,11 @@ public class ClientControl {
             if (!chatView.jChatArea.getText().contains(newMessage)) {
                 // Cập nhật tin nhắn mới trong chatView
                 if (senderName.equals(user.getName())) {
-                    chatView.appendMessage(newMessage, true);
+                    chatView.appendMessage(newMessage, 2);
+                } else if (senderName.equals("Server")) {
+                    chatView.appendMessage(newMessage, 1);
                 } else {
-                    chatView.appendMessage(newMessage, false);
+                    chatView.appendMessage(newMessage, 0);
                 }
             }
         }

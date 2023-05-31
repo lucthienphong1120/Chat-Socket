@@ -11,6 +11,12 @@ public interface RMIServerInterface extends Remote {
     
     public HashMap<String, RMIClientInterface> getListRMIClients() throws RemoteException;
 
-    public void updateRMIClient(UserModel user) throws RemoteException;
+    public void addRMIClient(UserModel user) throws RemoteException;
+    
+    public void addOnlineUser(UserModel user) throws RemoteException;
+
+    public void removeRMIClient(UserModel user) throws RemoteException;
+    
+    public void removeOnlineUser(UserModel user) throws RemoteException;
 
 }

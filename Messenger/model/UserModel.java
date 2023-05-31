@@ -21,7 +21,7 @@ public class UserModel implements Serializable {
     public UserModel(String username, String password) { // constructor for check login user
         this.username = username;
         this.password = password;
-        this.port = (int) (System.currentTimeMillis() % 1000 + 5000); // ramdom port by time from 5000-5999
+        this.port = (int) (System.currentTimeMillis() % 1000 + 9000); // ramdom port by time from 9000-9999
     }
 
     public UserModel(String name, String username, String password, String imgPath) {  // constructor for full object

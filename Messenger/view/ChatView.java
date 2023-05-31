@@ -9,12 +9,15 @@ import javax.swing.text.StyledDocument;
 public class ChatView extends javax.swing.JFrame {
 
     private StyledDocument document;
+    private SimpleAttributeSet alignCenter;
     private SimpleAttributeSet alignLeft;
     private SimpleAttributeSet alignRight;
 
     public ChatView() {
         initComponents();
         document = jChatArea.getStyledDocument();
+        alignCenter = new SimpleAttributeSet();
+        StyleConstants.setAlignment(alignCenter, StyleConstants.ALIGN_CENTER);
         alignLeft = new SimpleAttributeSet();
         StyleConstants.setAlignment(alignLeft, StyleConstants.ALIGN_LEFT);
         alignRight = new SimpleAttributeSet();
@@ -33,6 +36,7 @@ public class ChatView extends javax.swing.JFrame {
         jUserList = new javax.swing.JLayeredPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jChatArea = new javax.swing.JTextPane();
+        jLogout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chat App");
@@ -85,6 +89,8 @@ public class ChatView extends javax.swing.JFrame {
         jChatArea.setFocusable(false);
         jScrollPane2.setViewportView(jChatArea);
 
+        jLogout.setText("Logout");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -92,15 +98,19 @@ public class ChatView extends javax.swing.JFrame {
             .addComponent(jChatPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Title, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jUserList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jUserList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 198, Short.MAX_VALUE))
+                            .addComponent(jLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -114,7 +124,8 @@ public class ChatView extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(12, 12, 12)
                         .addComponent(jUserList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 344, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 321, Short.MAX_VALUE)
+                        .addComponent(jLogout))
                     .addComponent(jScrollPane2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jChatPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -144,8 +155,15 @@ public class ChatView extends javax.swing.JFrame {
         jUserList.repaint();
     }
 
-    public void appendMessage(String message, boolean myMessage) throws BadLocationException {
+    public void appendMessage(String message, int align) throws BadLocationException {
         String[] words = message.split(" ");
+        SimpleAttributeSet alignment;
+        switch (align) {
+            case 0 -> alignment = alignLeft;
+            case 1 -> alignment = alignCenter;
+            case 2 -> alignment = alignRight;
+            default -> throw new AssertionError();
+        }
         int line = 0;
 
         for (String word : words) {
@@ -163,7 +181,6 @@ public class ChatView extends javax.swing.JFrame {
         int start = document.getLength() - (message.length() + 1);
         int end = document.getLength() - 1;
 
-        SimpleAttributeSet alignment = myMessage ? alignRight : alignLeft;
         document.setParagraphAttributes(start, end, alignment, false);
     }
 
@@ -207,6 +224,7 @@ public class ChatView extends javax.swing.JFrame {
     public javax.swing.JTextPane jChatArea;
     private javax.swing.JPanel jChatPanel;
     private javax.swing.JLabel jLabel1;
+    public javax.swing.JButton jLogout;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JButton jSend;
     public javax.swing.JTextField jTextMessage;

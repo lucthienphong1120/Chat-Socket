@@ -178,13 +178,15 @@ class ClientHandler implements Runnable {
                     System.out.println(messageModel.getName() + " " + messageModel.getMessage());
                     // write file
                     messageControl.saveMessage(messageModel);
+                    if (messageModel.getMessage().contains("logout")
+                            && messageModel.getMessage().contains(user.getName())) {
+                        break;
+                    }
                 }
                 // send data to client
                 if (login) {
                     listMessage = messageControl.loadMessages();
                     if (!listMessage.isEmpty()) {
-//                    objOutput.writeObject(listMessage);
-//                    objOutput.flush();
                         broadcastMessage(listMessage);
                     }
                 }
@@ -194,15 +196,7 @@ class ClientHandler implements Runnable {
         } catch (IOException | InterruptedException | ClassNotFoundException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                inFromClient.close();
-                outToClient.close();
-                objInput.close();
-                objOutput.close();
-                clientSock.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            removeInstance();
         }
     }
 
@@ -221,7 +215,7 @@ class ClientHandler implements Runnable {
     }
 
     public boolean checkLogin(UserModel user) throws RemoteException {
-        // neu user da dang nhap roi thi khong cho dang nhap lan nua
+        // nếu user đã login rồi thì không cho đăng nhập nữa
         if (checkAlreadyLogin(user)) {
             return false;
         }
