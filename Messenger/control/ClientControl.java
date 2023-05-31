@@ -105,6 +105,7 @@ public class ClientControl {
                 }
                 if (user.isLoggin() && user.isOnline()) {
                     onlineUsers = serverRMI.getAllOnlineUsers();
+                    System.out.println("online user size " + onlineUsers.size());
                     updateOnlineList(onlineUsers);
                     // get data from server
                     Object obj = objInput.readObject();
@@ -112,7 +113,7 @@ public class ClientControl {
                         List<?> receivedList = (List<?>) obj;
                         if (!receivedList.isEmpty() && receivedList.get(0) instanceof MessageModel) {
                             messageList = (List<MessageModel>) obj;
-                            System.out.println(messageList.size());
+//                            System.out.println(messageList.size());
                             try {
                                 updateMessage(messageList);
                             } catch (BadLocationException ex) {
@@ -121,26 +122,11 @@ public class ClientControl {
                         }
                     }
                 }
-                if (!user.isLoggin() && user.isOnline()) {
-                    break;
-                }
 
                 Thread.sleep(500);
             }
         } catch (IOException | InterruptedException | ClassNotFoundException | NotBoundException ex) {
             Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                serverRMI.removeRMIClient(user);
-                serverRMI.removeOnlineUser(user);
-                inFromServer.close();
-                outToServer.close();
-                objInput.close();
-                objOutput.close();
-                connection.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
@@ -165,7 +151,7 @@ public class ClientControl {
     private void openChat() {
         chatView = new ChatView();
         chatView.setVisible(true);
-        chatView.setTitle("Chat App: " + user.getUsername());
+        chatView.setTitle("Chat App: [" + user.getName() + "]");
         chatView.Title.setText("Welcome back " + user.getName() + " !");
         user.setOnline(true);
         ActionListener chatEvent = (ActionEvent e1) -> {
@@ -180,8 +166,18 @@ public class ClientControl {
                     user.getName() + " has logout!",
                     new SimpleDateFormat("HH:mm:ss").format(new Date()));
             sendMessage(messageModel);
-            user.setLoggin(false);
             chatView.dispose();
+            try {
+                serverRMI.removeRMIClient(user);
+                serverRMI.removeOnlineUser(user);
+//                inFromServer.close();
+//                outToServer.close();
+//                objInput.close();
+//                objOutput.close();
+//                connection.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ClientControl.class.getName()).log(Level.SEVERE, null, ex);
+            }
         };
         chatView.jTextMessage.addActionListener(chatEvent);
         chatView.jSend.addActionListener(chatEvent);
@@ -221,7 +217,7 @@ public class ClientControl {
         if (!onlineUsers.isEmpty()) {
             chatView.resetUserList();
             for (UserModel online : onlineUsers) {
-                System.out.println("[i] Online user " + online.getUsername());
+//                System.out.println("[i] Online user " + online.getUsername());
                 chatView.addUserList(online.getName(), online.getImg());
             }
         }

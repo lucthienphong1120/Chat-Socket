@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
     public ArrayList<UserModel> getAllOnlineUsers() throws RemoteException {
         return onlineUsers;
     }
-    
+
     @Override
     public HashMap<String, RMIClientInterface> getListRMIClients() throws RemoteException {
         return listRMIClients;
@@ -40,25 +41,31 @@ public class RMIServerImpl extends UnicastRemoteObject implements RMIServerInter
     public void addRMIClient(UserModel user) throws RemoteException {
         try {
             RMIClientInterface clientRMI = (RMIClientInterface) Naming.lookup("rmi://localhost:" + user.getPort() + "/" + user.getUsername());
-            listRMIClients.put(user.getUsername(), clientRMI);
+            this.listRMIClients.put(user.getUsername(), clientRMI);
         } catch (NotBoundException | MalformedURLException | RemoteException ex) {
             Logger.getLogger(ServerControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public void addOnlineUser(UserModel user) throws RemoteException {
-        onlineUsers.add(user);
+        this.onlineUsers.add(user);
     }
-    
+
     @Override
     public void removeRMIClient(UserModel user) throws RemoteException {
-            listRMIClients.remove(user.getUsername());
+        this.listRMIClients.remove(user.getUsername());
     }
-    
+
     @Override
     public void removeOnlineUser(UserModel user) throws RemoteException {
-        onlineUsers.remove(user);
+        for (Iterator<UserModel> iterator = onlineUsers.iterator(); iterator.hasNext();) {
+            UserModel currentUser = iterator.next();
+            if (currentUser.getUsername().equals(user.getUsername())) {
+                iterator.remove();
+                break; // Nếu chỉ muốn xoá một phần tử duy nhất, ta có thể dùng break ở đây
+            }
+        }
     }
 
 }

@@ -206,7 +206,7 @@ class ClientHandler implements Runnable {
 
         for (UserModel onlineUser : onlineUsers) {
             String username = onlineUser.getUsername();
-//            // thông báo cho mọi người khác về tôi
+            // thông báo cho mọi người khác về tôi
 //            if (!username.equals(user.getUsername())) {
             RMIClientInterface clientRMI = listRMIClients.get(username);
             clientRMI.notifyOnOff(user.getUsername(), true);
